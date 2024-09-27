@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "target": "ES2023",
+    "target": "ES2022",
     "outDir": "dist",
     "esModuleInterop": true,
     "strict": true,
@@ -11,6 +11,9 @@
     "paths": {
       "~/*": ["src/*"]
     }
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
   },
   "files": ["src/type.d.ts"],
   "include": ["src/**/*"]
