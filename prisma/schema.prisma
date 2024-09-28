@@ -15,10 +15,10 @@ datasource db {
 
 model User {
   id                  String            @id @default(uuid())
-  name                String?
+  name                String
   email               String            @unique
   password            String
-  dateOfBirth         DateTime?         @map("date_of_birth")
+  dateOfBirth         DateTime          @map("date_of_birth")
   emailVerifyToken    String?           @map("email_verify_token")
   forgotPasswordToken String?           @map("forgot_password_token")
   verify              UserVerifyStatus? @default(Unverified)
@@ -28,10 +28,23 @@ model User {
   avatar              String?
   coverPhoto          String?           @map("cover_photo")
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  RefreshToken RefreshToken[]
 
   @@map("users")
+}
+
+model RefreshToken {
+  id    String @id @default(uuid())
+  token String @unique
+
+  createdAt DateTime @default(now()) @map("created_at")
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "user_id")
+  @@map("refresh_tokens")
 }
 
 enum UserVerifyStatus {
