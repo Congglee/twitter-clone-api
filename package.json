@@ -20,6 +20,7 @@
     "@types/jsonwebtoken": "^9.0.7",
     "@types/lodash": "^4.17.9",
     "@types/node": "^20.14.2",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^7.13.0",
     "@typescript-eslint/parser": "^7.13.0",
     "eslint": "^8.57.0",
@@ -41,6 +42,7 @@
     "express-validator": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
+    "uuid": "^10.0.0",
     "winston": "^3.14.2"
   }
 }

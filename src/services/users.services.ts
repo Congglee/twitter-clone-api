@@ -1,7 +1,7 @@
 import { User } from '@prisma/client'
 import prisma from '~/client'
 import HTTP_STATUS from '~/config/httpStatus'
-import { AUTH_MESSAGES } from '~/config/messages'
+import { AUTH_MESSAGES, USERS_MESSAGES } from '~/config/messages'
 import { ErrorWithStatus } from '~/types/errors'
 import { UpdateMeReqBody } from '~/types/requests'
 import { excludeFromObject } from '~/utils/helpers'
@@ -39,6 +39,48 @@ class UsersService {
     })
 
     return excludeFromObject(user, ['password', 'emailVerifyToken', 'forgotPasswordToken'])
+  }
+  async follow(user_id: string, followed_user_id: string) {
+    const follower = await prisma.follower.findFirst({
+      where: {
+        followerId: user_id,
+        followedUserId: followed_user_id
+      }
+    })
+    if (follower === null) {
+      await prisma.follower.create({
+        data: {
+          followerId: user_id,
+          followedUserId: followed_user_id
+        }
+      })
+
+      return { message: USERS_MESSAGES.FOLLOW_SUCCESS }
+    }
+
+    return { message: USERS_MESSAGES.FOLLOWED }
+  }
+  async unfollow(user_id: string, followed_user_id: string) {
+    const follower = await prisma.follower.findFirst({
+      where: {
+        followerId: user_id,
+        followedUserId: followed_user_id
+      }
+    })
+    if (follower === null) {
+      return { message: USERS_MESSAGES.ALREADY_UNFOLLOWED }
+    }
+
+    await prisma.follower.delete({
+      where: {
+        followerId_followedUserId: {
+          followerId: user_id,
+          followedUserId: followed_user_id
+        }
+      }
+    })
+
+    return { message: USERS_MESSAGES.UNFOLLOW_SUCCESS }
   }
 }
 

@@ -1,8 +1,19 @@
 import { Router } from 'express'
-import { getMeController, getProfileController, updateMeController } from '~/controllers/users.controllers'
+import {
+  followController,
+  getMeController,
+  getProfileController,
+  unfollowController,
+  updateMeController
+} from '~/controllers/users.controllers'
 import { accessTokenValidator } from '~/middlewares/auth.middlewares'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
-import { updateMeValidator, verifiedUserValidator } from '~/middlewares/users.middlewares'
+import {
+  followValidator,
+  unfollowValidator,
+  updateMeValidator,
+  verifiedUserValidator
+} from '~/middlewares/users.middlewares'
 import { UpdateMeReqBody } from '~/types/requests'
 import { wrapRequestHandler } from '~/utils/handlers'
 
@@ -29,5 +40,21 @@ usersRouter.patch(
 )
 
 usersRouter.get('/:username', wrapRequestHandler(getProfileController))
+
+usersRouter.post(
+  '/follow',
+  accessTokenValidator,
+  verifiedUserValidator,
+  followValidator,
+  wrapRequestHandler(followController)
+)
+
+usersRouter.delete(
+  '/follow/:user_id',
+  accessTokenValidator,
+  verifiedUserValidator,
+  unfollowValidator,
+  wrapRequestHandler(unfollowController)
+)
 
 export default usersRouter
