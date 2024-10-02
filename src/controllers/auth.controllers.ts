@@ -5,6 +5,7 @@ import {
   ForgotPasswordReqBody,
   LoginReqBody,
   LogoutReqBody,
+  RefreshTokenReqBody,
   RegisterReqBody,
   ResetPasswordReqBody,
   TokenPayload,
@@ -42,6 +43,17 @@ export const logoutController = async (req: Request<ParamsDictionary, any, Logou
   const result = await authService.logout(refresh_token)
 
   return res.json(result)
+}
+
+export const refreshTokenController = async (
+  req: Request<ParamsDictionary, any, RefreshTokenReqBody>,
+  res: Response
+) => {
+  const { refresh_token } = req.body
+  const { user_id, verify } = req.decoded_refresh_token as TokenPayload
+  const result = await authService.refreshToken({ user_id, verify, refresh_token })
+
+  return res.json({ message: AUTH_MESSAGES.REFRESH_TOKEN_SUCCESS, result })
 }
 
 export const verifyEmailController = async (

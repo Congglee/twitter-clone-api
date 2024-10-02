@@ -41,6 +41,24 @@ class AuthService {
   private signAccessAndRefreshToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
     return Promise.all([this.signAccessToken({ user_id, verify }), this.signRefreshToken({ user_id, verify })])
   }
+  async refreshToken({
+    user_id,
+    verify,
+    refresh_token
+  }: {
+    user_id: string
+    verify: UserVerifyStatus
+    refresh_token: string
+  }) {
+    const [new_access_token, new_refresh_token] = await Promise.all([
+      this.signAccessToken({ user_id, verify }),
+      this.signRefreshToken({ user_id, verify }),
+      prisma.refreshToken.delete({ where: { token: refresh_token } })
+    ])
+    await prisma.refreshToken.create({ data: { userId: user_id, token: new_refresh_token } })
+
+    return { access_token: new_access_token, refresh_token: new_refresh_token }
+  }
   async checkEmailExist(email: string) {
     const user = await prisma.user.findUnique({ where: { email } })
     return Boolean(user)
