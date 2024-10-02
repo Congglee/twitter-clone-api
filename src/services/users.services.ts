@@ -4,6 +4,7 @@ import HTTP_STATUS from '~/config/httpStatus'
 import { AUTH_MESSAGES, USERS_MESSAGES } from '~/config/messages'
 import { ErrorWithStatus } from '~/types/errors'
 import { UpdateMeReqBody } from '~/types/requests'
+import { hashPassword } from '~/utils/crypto'
 import { excludeFromObject } from '~/utils/helpers'
 
 class UsersService {
@@ -81,6 +82,14 @@ class UsersService {
     })
 
     return { message: USERS_MESSAGES.UNFOLLOW_SUCCESS }
+  }
+  async changePassword(user_id: string, new_password: string) {
+    await prisma.user.update({
+      where: { id: user_id },
+      data: { password: hashPassword(new_password) }
+    })
+
+    return { message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS }
   }
 }
 

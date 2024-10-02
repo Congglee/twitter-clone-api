@@ -11,7 +11,7 @@ import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
 
-const passwordSchema: ParamSchema = {
+export const passwordSchema: ParamSchema = {
   notEmpty: { errorMessage: AUTH_MESSAGES.PASSWORD_IS_REQUIRED },
   isString: { errorMessage: AUTH_MESSAGES.PASSWORD_MUST_BE_STRING },
   isLength: {
@@ -24,7 +24,7 @@ const passwordSchema: ParamSchema = {
   }
 }
 
-const confirmPasswordSchema: ParamSchema = {
+export const confirmPasswordSchema: ParamSchema = {
   notEmpty: { errorMessage: AUTH_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED },
   isString: { errorMessage: AUTH_MESSAGES.CONFIRM_PASSWORD_MUST_BE_STRING },
   isLength: {

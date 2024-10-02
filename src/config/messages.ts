@@ -35,7 +35,8 @@ export const AUTH_MESSAGES = {
   FORGOT_PASSWORD_TOKEN_IS_REQUIRED: 'Forgot password token is required',
   VERIFY_FORGOT_PASSWORD_SUCCESS: 'Verify forgot password successfully',
   INVALID_FORGOT_PASSWORD_TOKEN: 'Invalid forgot password token',
-  RESET_PASSWORD_SUCCESS: 'Reset password successfully'
+  RESET_PASSWORD_SUCCESS: 'Reset password successfully',
+  GMAIL_NOT_VERIFIED: 'Gmail not verified'
 } as const
 
 export const USERS_MESSAGES = {
@@ -49,6 +50,8 @@ export const USERS_MESSAGES = {
   WEBSITE_LENGTH: 'Website length must be between 1 and 200',
   USERNAME_MUST_BE_STRING: 'Username must be a string',
   USERNAME_LENGTH: 'Username length must be between 1 and 50',
+  USERNAME_INVALID:
+    'Username must be 4-15 characters long and contain only letters, numbers, underscores, not only numbers',
   IMAGE_URL_MUST_BE_STRING: 'Image URL must be a string',
   IMAGE_URL_LENGTH: 'Image URL length must be between 1 and 400',
   UPDATE_ME_SUCCESS: 'Update my profile successfully',
@@ -57,5 +60,8 @@ export const USERS_MESSAGES = {
   INVALID_USER_ID: 'Invalid followed user id',
   FOLLOWED: 'Followed',
   ALREADY_UNFOLLOWED: 'Already unfollowed',
-  UNFOLLOW_SUCCESS: 'Unfollow successfully'
+  UNFOLLOW_SUCCESS: 'Unfollow successfully',
+  USERNAME_EXISTED: 'Username existed',
+  OLD_PASSWORD_NOT_MATCH: 'Old password not match',
+  CHANGE_PASSWORD_SUCCESS: 'Change password successfully'
 }

@@ -3,12 +3,14 @@ import { NextFunction, Request, Response } from 'express'
 import { checkSchema, ParamSchema } from 'express-validator'
 import HTTP_STATUS from '~/config/httpStatus'
 import { AUTH_MESSAGES, USERS_MESSAGES } from '~/config/messages'
-import { dateOfBirthSchema, nameSchema } from '~/middlewares/auth.middlewares'
+import { confirmPasswordSchema, dateOfBirthSchema, nameSchema, passwordSchema } from '~/middlewares/auth.middlewares'
 import { ErrorWithStatus } from '~/types/errors'
 import { TokenPayload } from '~/types/requests'
 import { validate } from '~/utils/validation'
 import { validate as uuidValidate } from 'uuid'
 import prisma from '~/client'
+import { REGEX_USERNAME } from '~/config/regex'
+import { hashPassword } from '~/utils/crypto'
 
 const imageSchema: ParamSchema = {
   optional: true,
@@ -77,7 +79,17 @@ export const updateMeValidator = validate(
         optional: true,
         isString: { errorMessage: USERS_MESSAGES.USERNAME_MUST_BE_STRING },
         trim: true,
-        isLength: { options: { min: 1, max: 50 }, errorMessage: USERS_MESSAGES.USERNAME_LENGTH }
+        custom: {
+          options: async (value: string, { req }) => {
+            if (!REGEX_USERNAME.test(value)) {
+              throw Error(USERS_MESSAGES.USERNAME_INVALID)
+            }
+            const user = await prisma.user.findFirst({ where: { username: value } })
+            if (user) {
+              throw Error(USERS_MESSAGES.USERNAME_EXISTED)
+            }
+          }
+        }
       },
       avatar: imageSchema,
       cover_photo: imageSchema
@@ -89,3 +101,33 @@ export const updateMeValidator = validate(
 export const followValidator = validate(checkSchema({ followed_user_id: userIdSchema }, ['body']))
 
 export const unfollowValidator = validate(checkSchema({ user_id: userIdSchema }, ['params']))
+
+export const changePasswordValidator = validate(
+  checkSchema({
+    old_password: {
+      ...passwordSchema,
+      custom: {
+        options: async (value: string, { req }) => {
+          const { user_id } = (req as Request).decoded_authorization as TokenPayload
+          const user = await prisma.user.findUnique({ where: { id: user_id } })
+          if (!user) {
+            throw new ErrorWithStatus({
+              message: AUTH_MESSAGES.USER_NOT_FOUND,
+              status: HTTP_STATUS.NOT_FOUND
+            })
+          }
+          const { password } = user
+          const isMatch = hashPassword(value) === password
+          if (!isMatch) {
+            throw new ErrorWithStatus({
+              message: USERS_MESSAGES.OLD_PASSWORD_NOT_MATCH,
+              status: HTTP_STATUS.UNAUTHORIZED
+            })
+          }
+        }
+      }
+    },
+    password: passwordSchema,
+    confirm_password: confirmPasswordSchema
+  })
+)
