@@ -35,18 +35,21 @@ model User {
   followedBy Follower[] @relation("UserFollowers") // Users who follow this user
   following  Follower[] @relation("UserFollowing") // Users this user follows
 
+  @@index([email, password], name: "email_password_idx")
   @@map("users")
 }
 
 model RefreshToken {
-  id    String @id @default(uuid())
-  token String @unique
+  id    String   @id @default(uuid())
+  token String
+  iat   DateTime // Need to convert Epoch time to Date
+  exp   DateTime // Need to convert Epoch time to Date
 
   createdAt DateTime @default(now()) @map("created_at")
   userId    String   @map("user_id")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId], name: "user_id")
+  @@index([token], name: "refresh_token_idx")
   @@map("refresh_tokens")
 }
 
@@ -63,8 +66,34 @@ model Follower {
   @@map("followers")
 }
 
+model VideoStatus {
+  id      String         @id @default(uuid())
+  name    String
+  status  EncodingStatus
+  message String?
+
+  createAt DateTime @default(now()) @map("created_at")
+  updateAt DateTime @updatedAt @map("updated_at")
+
+  @@index([name], name: "video_status_name_idx")
+  @@map("video_statuses")
+}
+
 enum UserVerifyStatus {
   Unverified
   Verified
   Banned
+}
+
+enum MediaType {
+  Image
+  Video
+  HLS
+}
+
+enum EncodingStatus {
+  Pending
+  Processing
+  Success
+  Failed
 }

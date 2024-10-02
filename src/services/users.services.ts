@@ -10,7 +10,6 @@ import { excludeFromObject } from '~/utils/helpers'
 class UsersService {
   async getMe(user_id: string) {
     const user = (await prisma.user.findUnique({ where: { id: user_id } })) as User
-
     return excludeFromObject(user, ['password', 'emailVerifyToken', 'forgotPasswordToken'])
   }
   async getProfile(username: string) {
@@ -88,7 +87,6 @@ class UsersService {
       where: { id: user_id },
       data: { password: hashPassword(new_password) }
     })
-
     return { message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS }
   }
 }

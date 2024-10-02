@@ -7,7 +7,7 @@ import { AUTH_MESSAGES } from '~/config/messages'
 import { ErrorWithStatus } from '~/types/errors'
 import { RegisterReqBody } from '~/types/requests'
 import { hashPassword } from '~/utils/crypto'
-import { signToken } from '~/utils/jwt'
+import { signToken, verifyToken } from '~/utils/jwt'
 
 class AuthService {
   private signAccessToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
@@ -17,7 +17,14 @@ class AuthService {
       options: { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
     })
   }
-  private signRefreshToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
+  private signRefreshToken({ user_id, verify, exp }: { user_id: string; verify: UserVerifyStatus; exp?: number }) {
+    if (exp) {
+      return signToken({
+        payload: { user_id, token_type: TokenType.RefreshToken, verify, exp },
+        privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
+      })
+    }
+
     return signToken({
       payload: { user_id, token_type: TokenType.RefreshToken, verify },
       privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
@@ -44,18 +51,28 @@ class AuthService {
   async refreshToken({
     user_id,
     verify,
-    refresh_token
+    refresh_token,
+    exp
   }: {
     user_id: string
     verify: UserVerifyStatus
     refresh_token: string
+    exp: number
   }) {
     const [new_access_token, new_refresh_token] = await Promise.all([
       this.signAccessToken({ user_id, verify }),
       this.signRefreshToken({ user_id, verify }),
-      prisma.refreshToken.delete({ where: { token: refresh_token } })
+      prisma.refreshToken.deleteMany({ where: { token: refresh_token } })
     ])
-    await prisma.refreshToken.create({ data: { userId: user_id, token: new_refresh_token } })
+    const decoded_refresh_token = await this.decodeRefreshToken(new_refresh_token)
+    await prisma.refreshToken.create({
+      data: {
+        userId: user_id,
+        token: new_refresh_token,
+        iat: new Date(decoded_refresh_token.iat * 1000),
+        exp: new Date(decoded_refresh_token.exp * 1000)
+      }
+    })
 
     return { access_token: new_access_token, refresh_token: new_refresh_token }
   }
@@ -94,6 +111,9 @@ class AuthService {
       locale: string
     }
   }
+  private decodeRefreshToken(refresh_token: string) {
+    return verifyToken({ token: refresh_token, secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string })
+  }
   async register(payload: RegisterReqBody) {
     const result = await prisma.user.create({
       data: {
@@ -111,7 +131,15 @@ class AuthService {
       user_id,
       verify: UserVerifyStatus.Unverified
     })
-    await prisma.refreshToken.create({ data: { userId: user_id, token: refresh_token } })
+    const { iat, exp } = await this.decodeRefreshToken(refresh_token)
+    await prisma.refreshToken.create({
+      data: {
+        userId: user_id,
+        token: refresh_token,
+        iat: new Date(iat * 1000),
+        exp: new Date(exp * 1000)
+      }
+    })
 
     console.log('email_verify_token: ', email_verify_token)
 
@@ -130,7 +158,15 @@ class AuthService {
         user_id: user.id,
         verify: UserVerifyStatus.Verified
       })
-      await prisma.refreshToken.create({ data: { userId: user.id, token: refresh_token } })
+      const { iat, exp } = await this.decodeRefreshToken(refresh_token)
+      await prisma.refreshToken.create({
+        data: {
+          userId: user.id,
+          token: refresh_token,
+          iat: new Date(iat * 1000),
+          exp: new Date(exp * 1000)
+        }
+      })
 
       return { access_token, refresh_token, newUser: 0, verify: user.verify }
     } else {
@@ -148,15 +184,20 @@ class AuthService {
   }
   async login({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
     const [access_token, refresh_token] = await this.signAccessAndRefreshToken({ user_id, verify })
+    const { iat, exp } = await this.decodeRefreshToken(refresh_token)
     await prisma.refreshToken.create({
-      data: { userId: user_id, token: refresh_token }
+      data: {
+        userId: user_id,
+        token: refresh_token,
+        iat: new Date(iat * 1000),
+        exp: new Date(exp * 1000)
+      }
     })
 
     return { access_token, refresh_token }
   }
   async logout(refresh_token: string) {
-    await prisma.refreshToken.delete({ where: { token: refresh_token } })
-
+    await prisma.refreshToken.deleteMany({ where: { token: refresh_token } })
     return { message: AUTH_MESSAGES.LOGOUT_SUCCESS }
   }
   async verifyEmail(user_id: string) {
@@ -168,7 +209,15 @@ class AuthService {
       })
     ])
     const [access_token, refresh_token] = token
-    await prisma.refreshToken.create({ data: { userId: user_id, token: refresh_token } })
+    const { iat, exp } = await this.decodeRefreshToken(refresh_token)
+    await prisma.refreshToken.create({
+      data: {
+        userId: user_id,
+        token: refresh_token,
+        iat: new Date(iat * 1000),
+        exp: new Date(exp * 1000)
+      }
+    })
 
     return { access_token, refresh_token }
   }
@@ -202,7 +251,6 @@ class AuthService {
       where: { id: user_id },
       data: { forgotPasswordToken: '', password: hashPassword(password) }
     })
-
     return { message: AUTH_MESSAGES.RESET_PASSWORD_SUCCESS }
   }
 }

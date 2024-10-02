@@ -36,7 +36,8 @@ export const AUTH_MESSAGES = {
   VERIFY_FORGOT_PASSWORD_SUCCESS: 'Verify forgot password successfully',
   INVALID_FORGOT_PASSWORD_TOKEN: 'Invalid forgot password token',
   RESET_PASSWORD_SUCCESS: 'Reset password successfully',
-  GMAIL_NOT_VERIFIED: 'Gmail not verified'
+  GMAIL_NOT_VERIFIED: 'Gmail not verified',
+  REFRESH_TOKEN_SUCCESS: 'Refresh token successfully'
 } as const
 
 export const USERS_MESSAGES = {
@@ -64,4 +65,9 @@ export const USERS_MESSAGES = {
   USERNAME_EXISTED: 'Username existed',
   OLD_PASSWORD_NOT_MATCH: 'Old password not match',
   CHANGE_PASSWORD_SUCCESS: 'Change password successfully'
+}
+
+export const MEDIAS_MESSAGES = {
+  UPLOAD_SUCCESS: 'Upload successfully',
+  GET_VIDEO_STATUS_SUCCESS: 'Get video status successfully'
 }

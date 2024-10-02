@@ -10,9 +10,9 @@ config()
 let server: Server
 
 prisma.$connect().then(() => {
-  logger.info('Connected to SQL Database')
+  logger.success('Connected to SQL Database')
   server = app.listen(envConfig.port, () => {
-    logger.info(`Listening to port ${envConfig.port}`)
+    logger.success(`Listening to port ${envConfig.port}`)
   })
 })
 
@@ -28,7 +28,7 @@ const exitHandler = () => {
 }
 
 const unexpectedErrorHandler = (error: unknown) => {
-  logger.error(error)
+  logger.error(error instanceof Error ? error.stack || error.message : String(error))
   exitHandler()
 }
 

@@ -1,3 +1,4 @@
+import { UserVerifyStatus } from '@prisma/client'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { JwtPayload } from 'jsonwebtoken'
 import { TokenType } from '~/config/enums'
@@ -22,6 +23,9 @@ export interface VerifyEmailReqBody {
 export interface TokenPayload extends JwtPayload {
   user_id: string
   token_type: TokenType
+  verify: UserVerifyStatus
+  exp: number
+  iat: number
 }
 
 export interface LogoutReqBody {

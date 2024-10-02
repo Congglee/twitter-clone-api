@@ -221,7 +221,7 @@ export const refreshTokenValidator = validate(
             try {
               const [decoded_refresh_token, refresh_token] = await Promise.all([
                 verifyToken({ token: value, secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string }),
-                prisma.refreshToken.findUnique({ where: { token: value } })
+                prisma.refreshToken.findFirst({ where: { token: value } })
               ])
               if (refresh_token === null) {
                 throw new ErrorWithStatus({
