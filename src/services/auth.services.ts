@@ -5,7 +5,7 @@ import { TokenType } from '~/config/enums'
 import HTTP_STATUS from '~/config/httpStatus'
 import { AUTH_MESSAGES } from '~/config/messages'
 import { ErrorWithStatus } from '~/types/errors'
-import { RegisterReqBody } from '~/types/requests'
+import { RegisterReqBody } from '~/types/users.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken, verifyToken } from '~/utils/jwt'
 

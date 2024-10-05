@@ -34,6 +34,8 @@ model User {
 
   followedBy Follower[] @relation("UserFollowers") // Users who follow this user
   following  Follower[] @relation("UserFollowing") // Users this user follows
+  Tweet      Tweet[]
+  Mention    Mention[]
 
   @@index([email, password], name: "email_password_idx")
   @@map("users")
@@ -66,6 +68,76 @@ model Follower {
   @@map("followers")
 }
 
+model Tweet {
+  id         String        @id @default(uuid())
+  type       TweetType
+  audience   TweetAudience
+  content    String
+  guestViews Int           @default(0) @map("guest_views")
+  userViews  Int           @default(0) @map("user_views")
+  parentId   String?       @map("parent_id") // Only null for original tweets
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  Media        Media[]
+  TweetHashTag TweetHashTag[]
+  Mention      Mention[]
+
+  @@map("tweets")
+}
+
+model HashTag {
+  id   String @id @default(uuid())
+  name String @unique
+
+  createdAt    DateTime       @default(now()) @map("created_at")
+  TweetHashTag TweetHashTag[]
+
+  @@map("hashtags")
+}
+
+model TweetHashTag {
+  tweetId String @map("tweet_id")
+  tweet   Tweet  @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+
+  hashtagId String  @map("hashtag_id")
+  hashtag   HashTag @relation(fields: [hashtagId], references: [id], onDelete: Cascade)
+
+  @@id([tweetId, hashtagId]) // Composite primary key
+  @@map("tweet_hashtags")
+}
+
+model Mention {
+  id String @id @default(uuid())
+
+  mentionedUserId String @map("mentioned_user_id")
+  mentionedUser   User   @relation(fields: [mentionedUserId], references: [id], onDelete: Cascade)
+
+  tweetId String @map("tweet_id")
+  tweet   Tweet  @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([mentionedUserId, tweetId]) // Ensure a user can only be mentioned once in a tweet
+  @@map("mentions")
+}
+
+model Media {
+  id   String    @id @default(uuid())
+  url  String
+  type MediaType
+
+  tweetId String @map("tweet_id")
+  tweet   Tweet  @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("medias")
+}
+
 model VideoStatus {
   id      String         @id @default(uuid())
   name    String
@@ -96,4 +168,16 @@ enum EncodingStatus {
   Processing
   Success
   Failed
+}
+
+enum TweetType {
+  Tweet
+  Retweet
+  Comment
+  QuoteTweet
+}
+
+enum TweetAudience {
+  Everyone
+  TwitterCircle
 }

@@ -16,7 +16,7 @@ import {
   updateMeValidator,
   verifiedUserValidator
 } from '~/middlewares/users.middlewares'
-import { UpdateMeReqBody } from '~/types/requests'
+import { UpdateMeReqBody } from '~/types/users.requests'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const usersRouter = Router()

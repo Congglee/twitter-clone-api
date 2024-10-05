@@ -11,7 +11,7 @@ import {
   TokenPayload,
   VerifyEmailReqBody,
   VerifyForgotPasswordReqBody
-} from '~/types/requests'
+} from '~/types/users.requests'
 import { User, UserVerifyStatus } from '@prisma/client'
 import { AUTH_MESSAGES } from '~/config/messages'
 import HTTP_STATUS from '~/config/httpStatus'

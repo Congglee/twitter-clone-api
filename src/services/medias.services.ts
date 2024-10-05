@@ -8,7 +8,7 @@ import { UPLOAD_IMAGE_DIR } from '~/config/dir'
 import { isProduction } from '~/config/config'
 import { encodeHLSWithMultipleVideoStreams } from '~/utils/video'
 import prisma from '~/client'
-import { EncodingStatus } from '@prisma/client'
+import { EncodingStatus, Media, MediaType } from '@prisma/client'
 
 // * A Queue class to process encode video task in order
 // * And avoid multiple encoding at the same time
@@ -80,8 +80,7 @@ class MediasService {
   async uploadImage(req: Request) {
     const files = await handleUploadImage(req)
 
-    // const result: Media[]
-    const result = await Promise.all(
+    const result: Pick<Media, 'url' | 'type'>[] = await Promise.all(
       files.map(async (file) => {
         const newName = getNameFromFullname(file.newFilename) // Get name without extension from filename ==> ex: 123.jpg => 123
         const newPath = path.resolve(UPLOAD_IMAGE_DIR, `${newName}.jpg`) // Get new path to save file after compress and convert to jpg format
@@ -94,8 +93,7 @@ class MediasService {
           url: isProduction
             ? `${process.env.HOST}/static/image/${newName}.jpg`
             : `http://localhost:${process.env.PORT}/static/image/${newName}.jpg`,
-          // type: MediaType.Image
-          type: 'Image'
+          type: MediaType.Image
         }
       })
     )
@@ -105,14 +103,12 @@ class MediasService {
   async uploadVideo(req: Request) {
     const files = await handleUploadVideo(req)
 
-    // const result: Media[]
-    const result = files.map((file) => {
+    const result: Pick<Media, 'url' | 'type'>[] = files.map((file) => {
       return {
         url: isProduction
           ? `${process.env.HOST}/static/video/${file.newFilename}`
           : `http://localhost:${process.env.PORT}/static/video/${file.newFilename}`,
-        // type: MediaType.Video
-        type: 'Video'
+        type: MediaType.Video
       }
     })
 
@@ -120,8 +116,7 @@ class MediasService {
   }
   async uploadVideoHLS(req: Request) {
     const files = await handleUploadVideo(req)
-    // const result: Media[]
-    const result = await Promise.all(
+    const result: Pick<Media, 'url' | 'type'>[] = await Promise.all(
       files.map(async (file) => {
         await encodeHLSWithMultipleVideoStreams(file.filepath)
         const newName = getNameFromFullname(file.newFilename)
@@ -131,8 +126,7 @@ class MediasService {
           url: isProduction
             ? `${process.env.HOST}/static/video-hls/${newName}.m3u8`
             : `http://localhost:${process.env.PORT}/static/video-hls/${newName}.m3u8`,
-          // type: MediaType.HLS
-          type: 'HLS'
+          type: MediaType.HLS
         }
       })
     )

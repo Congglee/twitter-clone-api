@@ -3,7 +3,7 @@ import prisma from '~/client'
 import HTTP_STATUS from '~/config/httpStatus'
 import { AUTH_MESSAGES, USERS_MESSAGES } from '~/config/messages'
 import { ErrorWithStatus } from '~/types/errors'
-import { UpdateMeReqBody } from '~/types/requests'
+import { UpdateMeReqBody } from '~/types/users.requests'
 import { hashPassword } from '~/utils/crypto'
 import { excludeFromObject } from '~/utils/helpers'
 
