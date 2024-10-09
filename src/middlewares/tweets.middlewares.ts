@@ -112,6 +112,12 @@ export const createTweetValidator = validate(
               throw new Error(TWEETS_MESSAGES.MENTIONS_MUST_BE_AN_ARRAY_OF_USER_ID)
             }
 
+            // Check for duplicate user_ids in the mentions array
+            const uniqueMentions = new Set(value)
+            if (uniqueMentions.size !== value.length) {
+              throw new Error(TWEETS_MESSAGES.DUPLICATE_MENTIONS_NOT_ALLOWED)
+            }
+
             // Check if all mentioned users exist
             if (value && value.length) {
               await Promise.all(
@@ -166,8 +172,7 @@ export const tweetIdValidator = validate(
               })
             }
 
-            // Start a sequential transaction to fetch tweet and child tweets
-            const [tweet, childTweets] = await prisma.$transaction([
+            const [tweet, childTweets] = await Promise.all([
               prisma.tweet.findUnique({
                 where: { id: value },
                 include: {
@@ -186,31 +191,13 @@ export const tweetIdValidator = validate(
                   },
                   Bookmark: true,
                   Like: true,
-                  Media: true,
-                  user: {
-                    select: {
-                      name: true,
-                      username: true,
-                      email: true,
-                      avatar: true
-                    }
-                  }
+                  Media: true
                 }
               }),
-              // Get child tweets (retweets, comments, quotetweets)
               prisma.tweet.findMany({
                 where: {
                   parentId: value,
                   OR: [{ type: TweetType.Retweet }, { type: TweetType.Comment }, { type: TweetType.QuoteTweet }]
-                },
-                include: {
-                  user: {
-                    select: {
-                      name: true,
-                      username: true,
-                      avatar: true
-                    }
-                  }
                 }
               })
             ])
@@ -228,9 +215,20 @@ export const tweetIdValidator = validate(
             const medias = tweet.Media.map((media) => ({ url: media.url, type: media.type }))
 
             // Calculate counts
-            const retweetCount = childTweets.filter((tweet) => tweet.type === TweetType.Retweet).length
-            const commentCount = childTweets.filter((tweet) => tweet.type === TweetType.Comment).length
-            const quoteCount = childTweets.filter((tweet) => tweet.type === TweetType.QuoteTweet).length
+            let retweetCount = 0
+            let commentCount = 0
+            let quoteCount = 0
+
+            childTweets.forEach((childTweet) => {
+              if (childTweet.type === TweetType.Retweet) {
+                retweetCount++
+              } else if (childTweet.type === TweetType.Comment) {
+                commentCount++
+              } else if (childTweet.type === TweetType.QuoteTweet) {
+                quoteCount++
+              }
+            })
+
             const bookmarkCount = tweet.Bookmark.length
             const likeCount = tweet.Like.length
 
@@ -291,3 +289,41 @@ export const audienceValidator = wrapRequestHandler(async (req: Request, res: Re
 
   next()
 })
+
+export const getTweetChildrenValidator = validate(
+  checkSchema(
+    {
+      tweet_type: {
+        isIn: {
+          options: [tweetTypes],
+          errorMessage: TWEETS_MESSAGES.INVALID_TYPE
+        }
+      },
+      limit: {
+        isNumeric: true,
+        custom: {
+          options: async (value, { req }) => {
+            const num = Number(value)
+            if (num > 100 || num < 1) {
+              throw new Error('1 <= limit <= 100')
+            }
+            return true
+          }
+        }
+      },
+      page: {
+        isNumeric: true,
+        custom: {
+          options: async (value, { req }) => {
+            const num = Number(value)
+            if (num < 1) {
+              throw new Error('page >= 100')
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['query']
+  )
+)

@@ -1,9 +1,10 @@
 import { ParamsDictionary } from 'express-serve-static-core'
 import { Request, Response } from 'express'
-import { TweetRequestBody } from '~/types/tweets.types'
+import { TweetParams, TweetQuery, TweetRequestBody } from '~/types/tweets.types'
 import { TokenPayload } from '~/types/users.types'
 import tweetsService from '~/services/tweets.services'
 import { TWEETS_MESSAGES } from '~/config/messages'
+import { TweetType } from '@prisma/client'
 
 export const createTweetController = async (req: Request<ParamsDictionary, any, TweetRequestBody>, res: Response) => {
   const { user_id } = req.decoded_authorization as TokenPayload
@@ -22,4 +23,30 @@ export const getTweetController = async (req: Request, res: Response) => {
   }
 
   return res.json({ message: TWEETS_MESSAGES.GET_TWEET_DETAIL_SUCCESS, result: tweet })
+}
+
+export const getTweetChildrenController = async (req: Request<TweetParams, any, any, TweetQuery>, res: Response) => {
+  const tweet_type = req.query.tweet_type as TweetType
+  const limit = Number(req.query.limit)
+  const page = Number(req.query.page)
+  const user_id = req.decoded_authorization?.user_id
+
+  const { total, tweets } = await tweetsService.getTweetChildren({
+    tweet_id: req.params.tweet_id,
+    tweet_type,
+    limit,
+    page,
+    user_id
+  })
+
+  return res.json({
+    message: 'Get tweet children successfully',
+    result: {
+      tweets,
+      tweet_type,
+      limit,
+      page,
+      total_page: Math.ceil(total / limit)
+    }
+  })
 }

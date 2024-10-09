@@ -107,7 +107,7 @@ model HashTag {
   @@map("hashtags")
 }
 
-// Should have using implicit many-to-many relation for tweet and hashtag
+// Should have used an implicit many-to-many relation for Tweet and HashTag
 model TweetHashTag {
   tweetId String @map("tweet_id")
   tweet   Tweet  @relation(fields: [tweetId], references: [id], onDelete: Cascade)

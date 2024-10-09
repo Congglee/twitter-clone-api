@@ -8,6 +8,7 @@ import { ErrorWithStatus } from '~/types/errors.types'
 import { RegisterReqBody } from '~/types/users.types'
 import { hashPassword } from '~/utils/crypto'
 import { signToken, verifyToken } from '~/utils/jwt'
+import { v4 as uuidv4 } from 'uuid'
 
 class AuthService {
   private signAccessToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
@@ -115,18 +116,20 @@ class AuthService {
     return verifyToken({ token: refresh_token, secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string })
   }
   async register(payload: RegisterReqBody) {
-    const result = await prisma.user.create({
+    const user_id = uuidv4()
+    const email_verify_token = await this.signEmailVerifyToken({ user_id, verify: UserVerifyStatus.Unverified })
+
+    await prisma.user.create({
       data: {
+        id: user_id,
         name: payload.name,
         email: payload.email,
-        username: `user_${Date.now()}`,
+        username: `user${user_id}`,
         dateOfBirth: new Date(payload.date_of_birth),
         password: hashPassword(payload.password)
       }
     })
-    const user_id = result.id
 
-    const email_verify_token = await this.signEmailVerifyToken({ user_id, verify: UserVerifyStatus.Unverified })
     const [access_token, refresh_token] = await this.signAccessAndRefreshToken({
       user_id,
       verify: UserVerifyStatus.Unverified
