@@ -3,6 +3,7 @@ import { pick } from 'lodash'
 
 type FilterKeys<T> = Array<keyof T>
 
+// Filter middleware to filter out unwanted keys from request body
 export const filterMiddleware =
   <T>(filterKeys: FilterKeys<T>) =>
   (req: Request, res: Response, next: NextFunction) => {

@@ -6,7 +6,7 @@ import prisma from '~/client'
 import HTTP_STATUS from '~/config/httpStatus'
 import { AUTH_MESSAGES } from '~/config/messages'
 import authService from '~/services/auth.services'
-import { ErrorWithStatus } from '~/types/errors'
+import { ErrorWithStatus } from '~/types/errors.types'
 import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
@@ -55,12 +55,14 @@ const forgotPasswordTokenSchema: ParamSchema = {
           status: HTTP_STATUS.UNAUTHORIZED
         })
       }
+
       try {
         const decoded_forgot_password_token = await verifyToken({
           token: value,
           secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
         })
         const { user_id } = decoded_forgot_password_token
+
         const user = await prisma.user.findUnique({ where: { id: user_id } })
         if (user === null) {
           throw new ErrorWithStatus({
@@ -68,12 +70,14 @@ const forgotPasswordTokenSchema: ParamSchema = {
             status: HTTP_STATUS.UNAUTHORIZED
           })
         }
+
         if (user.forgotPasswordToken !== value) {
           throw new ErrorWithStatus({
             message: AUTH_MESSAGES.INVALID_FORGOT_PASSWORD_TOKEN,
             status: HTTP_STATUS.UNAUTHORIZED
           })
         }
+
         req.decoded_forgot_password_token = decoded_forgot_password_token
       } catch (error) {
         if (error instanceof JsonWebTokenError) {
@@ -84,6 +88,7 @@ const forgotPasswordTokenSchema: ParamSchema = {
         }
         throw error
       }
+
       return true
     }
   }
@@ -123,6 +128,7 @@ export const loginValidator = validate(
             if (user === null) {
               throw new Error(AUTH_MESSAGES.EMAIL_OR_PASSWORD_IS_INCORRECT)
             }
+
             req.user = user
             return true
           }
@@ -158,6 +164,7 @@ export const registerValidator = validate(
             if (isExistEmail) {
               throw new Error(AUTH_MESSAGES.EMAIL_ALREADY_EXISTS)
             }
+
             return true
           }
         }
@@ -184,6 +191,7 @@ export const accessTokenValidator = validate(
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
+
             try {
               const decoded_authorization = await verifyToken({
                 token: access_token,
@@ -196,6 +204,7 @@ export const accessTokenValidator = validate(
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
+
             return true
           }
         }
@@ -218,17 +227,20 @@ export const refreshTokenValidator = validate(
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
+
             try {
               const [decoded_refresh_token, refresh_token] = await Promise.all([
                 verifyToken({ token: value, secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string }),
                 prisma.refreshToken.findFirst({ where: { token: value } })
               ])
+
               if (refresh_token === null) {
                 throw new ErrorWithStatus({
                   message: AUTH_MESSAGES.USED_REFRESH_TOKEN_OR_NOT_EXIST,
                   status: HTTP_STATUS.UNAUTHORIZED
                 })
               }
+
               ;(req as Request).decoded_refresh_token = decoded_refresh_token
             } catch (error) {
               if (error instanceof JsonWebTokenError) {
@@ -239,6 +251,7 @@ export const refreshTokenValidator = validate(
               }
               throw error
             }
+
             return true
           }
         }
@@ -261,6 +274,7 @@ export const emailVerifyTokenValidator = validate(
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
+
             try {
               const decoded_email_verify_token = await verifyToken({
                 token: value,
@@ -273,6 +287,7 @@ export const emailVerifyTokenValidator = validate(
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
+
             return true
           }
         }
@@ -294,6 +309,7 @@ export const forgotPasswordValidator = validate(
             if (user === null) {
               throw new Error(AUTH_MESSAGES.USER_NOT_FOUND)
             }
+
             req.user = user
             return true
           }

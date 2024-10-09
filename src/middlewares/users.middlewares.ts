@@ -4,8 +4,8 @@ import { checkSchema, ParamSchema } from 'express-validator'
 import HTTP_STATUS from '~/config/httpStatus'
 import { AUTH_MESSAGES, USERS_MESSAGES } from '~/config/messages'
 import { confirmPasswordSchema, dateOfBirthSchema, nameSchema, passwordSchema } from '~/middlewares/auth.middlewares'
-import { ErrorWithStatus } from '~/types/errors'
-import { TokenPayload } from '~/types/users.requests'
+import { ErrorWithStatus } from '~/types/errors.types'
+import { TokenPayload } from '~/types/users.types'
 import { validate } from '~/utils/validation'
 import { validate as uuidValidate } from 'uuid'
 import prisma from '~/client'
@@ -103,31 +103,43 @@ export const followValidator = validate(checkSchema({ followed_user_id: userIdSc
 export const unfollowValidator = validate(checkSchema({ user_id: userIdSchema }, ['params']))
 
 export const changePasswordValidator = validate(
-  checkSchema({
-    old_password: {
-      ...passwordSchema,
-      custom: {
-        options: async (value: string, { req }) => {
-          const { user_id } = (req as Request).decoded_authorization as TokenPayload
-          const user = await prisma.user.findUnique({ where: { id: user_id } })
-          if (!user) {
-            throw new ErrorWithStatus({
-              message: AUTH_MESSAGES.USER_NOT_FOUND,
-              status: HTTP_STATUS.NOT_FOUND
-            })
-          }
-          const { password } = user
-          const isMatch = hashPassword(value) === password
-          if (!isMatch) {
-            throw new ErrorWithStatus({
-              message: USERS_MESSAGES.OLD_PASSWORD_NOT_MATCH,
-              status: HTTP_STATUS.UNAUTHORIZED
-            })
+  checkSchema(
+    {
+      old_password: {
+        ...passwordSchema,
+        custom: {
+          options: async (value: string, { req }) => {
+            const { user_id } = (req as Request).decoded_authorization as TokenPayload
+            const user = await prisma.user.findUnique({ where: { id: user_id } })
+            if (!user) {
+              throw new ErrorWithStatus({
+                message: AUTH_MESSAGES.USER_NOT_FOUND,
+                status: HTTP_STATUS.NOT_FOUND
+              })
+            }
+            const { password } = user
+            const isMatch = hashPassword(value) === password
+            if (!isMatch) {
+              throw new ErrorWithStatus({
+                message: USERS_MESSAGES.OLD_PASSWORD_NOT_MATCH,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
           }
         }
-      }
+      },
+      password: passwordSchema,
+      confirm_password: confirmPasswordSchema
     },
-    password: passwordSchema,
-    confirm_password: confirmPasswordSchema
-  })
+    ['body']
+  )
 )
+
+export const isUserLoggedInValidator = (middleware: (req: Request, res: Response, next: NextFunction) => void) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (req.headers.authorization) {
+      return middleware(req, res, next)
+    }
+    next()
+  }
+}

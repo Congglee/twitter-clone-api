@@ -9,7 +9,7 @@ import {
   TokenPayload,
   UnfollowReqParams,
   UpdateMeReqBody
-} from '~/types/users.requests'
+} from '~/types/users.types'
 
 export const getMeController = async (req: Request, res: Response) => {
   const { user_id } = req.decoded_authorization as TokenPayload

@@ -28,14 +28,20 @@ model User {
   avatar              String?
   coverPhoto          String?           @map("cover_photo")
 
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @updatedAt @map("updated_at")
-  RefreshToken RefreshToken[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  followedBy Follower[] @relation("UserFollowers") // Users who follow this user
-  following  Follower[] @relation("UserFollowing") // Users this user follows
-  Tweet      Tweet[]
-  Mention    Mention[]
+  RefreshToken RefreshToken[]
+  followedBy   Follower[]     @relation("UserFollowers") // Users who follow this user
+  following    Follower[]     @relation("UserFollowing") // Users this user follows
+  Tweet        Tweet[]
+  Mention      Mention[]
+  Bookmark     Bookmark[]
+  Like         Like[]
+
+  // Implicit many-to-many self-relation for twitter_circle 
+  twitterCircle   User[] @relation("TwitterCircle") // Users in this user's Twitter circle
+  inTwitterCircle User[] @relation("TwitterCircle") // Users who have this user in their Twitter circle
 
   @@index([email, password], name: "email_password_idx")
   @@map("users")
@@ -85,6 +91,8 @@ model Tweet {
   Media        Media[]
   TweetHashTag TweetHashTag[]
   Mention      Mention[]
+  Bookmark     Bookmark[]
+  Like         Like[]
 
   @@map("tweets")
 }
@@ -99,6 +107,7 @@ model HashTag {
   @@map("hashtags")
 }
 
+// Should have using implicit many-to-many relation for tweet and hashtag
 model TweetHashTag {
   tweetId String @map("tweet_id")
   tweet   Tweet  @relation(fields: [tweetId], references: [id], onDelete: Cascade)
@@ -149,6 +158,32 @@ model VideoStatus {
 
   @@index([name], name: "video_status_name_idx")
   @@map("video_statuses")
+}
+
+model Bookmark {
+  id      String @id @default(uuid())
+  userId  String @map("user_id")
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tweetId String @map("tweet_id")
+  tweet   Tweet  @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, tweetId]) // Ensure a user can only bookmark a tweet once
+  @@map("bookmarks")
+}
+
+model Like {
+  id      String @id @default(uuid())
+  userId  String @map("user_id")
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tweetId String @map("tweet_id")
+  tweet   Tweet  @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, tweetId]) // Ensure a user can only like a tweet once
+  @@map("likes")
 }
 
 enum UserVerifyStatus {

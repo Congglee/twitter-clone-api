@@ -9,6 +9,8 @@ import { initFolder } from '~/utils/file'
 import cors from 'cors'
 import { removeExpiredRefreshTokens } from '~/jobs/auth.jobs'
 import tweetsRouter from '~/routes/tweets.routes'
+import bookmarksRouter from '~/routes/bookmarks.routes'
+import likesRouter from '~/routes/likes.routes'
 
 const app = express()
 
@@ -24,6 +26,8 @@ app.use('/auth', authRouter)
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use('/tweets', tweetsRouter)
+app.use('/bookmarks', bookmarksRouter)
+app.use('/likes', likesRouter)
 app.use('/static', staticRouter)
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 
