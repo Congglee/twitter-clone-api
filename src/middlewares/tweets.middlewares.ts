@@ -298,7 +298,15 @@ export const getTweetChildrenValidator = validate(
           options: [tweetTypes],
           errorMessage: TWEETS_MESSAGES.INVALID_TYPE
         }
-      },
+      }
+    },
+    ['query']
+  )
+)
+
+export const paginationValidator = validate(
+  checkSchema(
+    {
       limit: {
         isNumeric: true,
         custom: {

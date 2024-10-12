@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import bookmarkService from '~/services/boomarks.services'
 import { BOOKMARKS_MESSAGES } from '~/config/messages'
 import { TokenPayload } from '~/types/users.types'
-import { BookmarkTweetRequestBody } from '~/types/bookmarks.requests'
+import { BookmarkTweetRequestBody } from '~/types/bookmarks.types'
 
 export const bookmarkTweetController = async (
   req: Request<ParamsDictionary, any, BookmarkTweetRequestBody>,

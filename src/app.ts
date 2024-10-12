@@ -11,6 +11,7 @@ import { removeExpiredRefreshTokens } from '~/jobs/auth.jobs'
 import tweetsRouter from '~/routes/tweets.routes'
 import bookmarksRouter from '~/routes/bookmarks.routes'
 import likesRouter from '~/routes/likes.routes'
+import searchRouter from '~/routes/search.routes'
 
 // Uncomment this line to seed the database with some initial data
 // import '~/utils/seed'
@@ -31,6 +32,7 @@ app.use('/medias', mediasRouter)
 app.use('/tweets', tweetsRouter)
 app.use('/bookmarks', bookmarksRouter)
 app.use('/likes', likesRouter)
+app.use('/search', searchRouter)
 app.use('/static', staticRouter)
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 

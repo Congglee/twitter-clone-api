@@ -4,13 +4,18 @@ import app from '~/app'
 import prisma from '~/client'
 import { envConfig } from '~/config/config'
 import logger from '~/config/logger'
+import tweetsService from '~/services/tweets.services'
 
 config()
 
 let server: Server
 
-prisma.$connect().then(() => {
+prisma.$connect().then(async () => {
   logger.success('Connected to SQL Database')
+
+  // Check and create full-text search index for tweets content
+  await tweetsService.indexTweets()
+
   server = app.listen(envConfig.port, () => {
     logger.success(`Listening to port ${envConfig.port}`)
   })

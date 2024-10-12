@@ -1,4 +1,4 @@
-import { ParamsDictionary } from 'express-serve-static-core'
+import { ParamsDictionary, Query } from 'express-serve-static-core'
 import { TweetType, TweetAudience, Media, User, Tweet, HashTag } from '@prisma/client'
 
 export type TweetMedia = Pick<Media, 'url' | 'type'>
@@ -29,8 +29,11 @@ export interface TweetParams extends ParamsDictionary {
   tweet_id: string
 }
 
-export interface TweetQuery extends ParamsDictionary {
+export interface TweetQuery extends Pagination, Query {
+  tweet_type: string
+}
+
+export interface Pagination {
   limit: string
   page: string
-  tweet_type: string
 }

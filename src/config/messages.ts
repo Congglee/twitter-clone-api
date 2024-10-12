@@ -1,3 +1,5 @@
+import { MediaTypeQuery } from '~/types/search.types'
+
 export const AUTH_MESSAGES = {
   VALIDATION_ERROR: 'Validation error',
   NAME_IS_REQUIRED: 'Name is required',
@@ -89,7 +91,9 @@ export const TWEETS_MESSAGES = {
   INVALID_TWEET_ID: 'Invalid tweet id',
   TWEET_NOT_FOUND: 'Tweet not found',
   TWEET_IS_NOT_PUBLIC: 'Tweet is not public',
-  GET_TWEET_DETAIL_SUCCESS: 'Get tweet detail successfully'
+  GET_TWEET_DETAIL_SUCCESS: 'Get tweet detail successfully',
+  GET_TWEET_CHILDREN_SUCCESS: 'Get tweet children successfully',
+  GET_NEW_FEEDS_SUCCESS: 'Get new feeds successfully'
 } as const
 
 export const BOOKMARKS_MESSAGES = {
@@ -100,4 +104,11 @@ export const BOOKMARKS_MESSAGES = {
 export const LIKE_MESSAGES = {
   LIKE_SUCCESSFULLY: 'Like successfully',
   UNLIKE_SUCCESSFULLY: 'Unlike successfully'
+} as const
+
+export const SEARCH_MESSAGES = {
+  SEARCH_SUCCESSFULLY: 'Search successfully',
+  CONTENT_MUST_BE_A_STRING: 'Content must be a string',
+  MEDIA_TYPE_MUST_BE_A_VALID_MEDIA_TYPE: `Media type must be one of ${Object.values(MediaTypeQuery).join(', ')}`,
+  PEOPLE_FOLLOW_MUST_BE_0_OR_1: 'People follow must be 0 or 1'
 } as const
