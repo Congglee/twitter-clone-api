@@ -7,6 +7,7 @@ import HTTP_STATUS from '~/config/httpStatus'
 import { AUTH_MESSAGES } from '~/config/messages'
 import authService from '~/services/auth.services'
 import { ErrorWithStatus } from '~/types/errors.types'
+import { verifyAccessToken } from '~/utils/commons'
 import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
@@ -185,27 +186,7 @@ export const accessTokenValidator = validate(
         custom: {
           options: async (value: string, { req }) => {
             const access_token = (value || '').split(' ')[1]
-            if (!access_token) {
-              throw new ErrorWithStatus({
-                message: AUTH_MESSAGES.ACCESS_TOKEN_IS_REQUIRED,
-                status: HTTP_STATUS.UNAUTHORIZED
-              })
-            }
-
-            try {
-              const decoded_authorization = await verifyToken({
-                token: access_token,
-                secretOrPublicKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
-              })
-              ;(req as Request).decoded_authorization = decoded_authorization
-            } catch (error) {
-              throw new ErrorWithStatus({
-                message: capitalize((error as JsonWebTokenError).message),
-                status: HTTP_STATUS.UNAUTHORIZED
-              })
-            }
-
-            return true
+            return await verifyAccessToken(access_token, req as Request)
           }
         }
       }

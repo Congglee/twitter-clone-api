@@ -55,7 +55,12 @@
     "nanoid": "^5.0.7",
     "node-cron": "^3.0.3",
     "sharp": "^0.33.5",
+    "socket.io": "^4.8.0",
     "uuid": "^10.0.0",
     "zx": "^8.1.8"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.8",
+    "utf-8-validate": "^6.0.4"
   }
 }

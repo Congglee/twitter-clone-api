@@ -24,8 +24,7 @@ class TweetsService {
   private async checkAndCreateHashtag(hashtags: string[]) {
     const hashtagRecords = await Promise.all(
       hashtags.map(async (hashtag) => {
-        // Cannot use upsert here because it may cause unique constraint violation
-        const existingHashtag = await prisma.hashTag.findUnique({
+        const existingHashtag = await prisma.hashTag.findFirst({
           where: { name: hashtag }
         })
         if (existingHashtag) {

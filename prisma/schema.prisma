@@ -44,6 +44,9 @@ model User {
   twitterCircle   User[] @relation("TwitterCircle") // Users in this user's Twitter circle
   inTwitterCircle User[] @relation("TwitterCircle") // Users who have this user in their Twitter circle
 
+  SentMessages     Conversation[] @relation("SentMessages") // Conversations this user has started
+  ReceivedMessages Conversation[] @relation("ReceivedMessages") // Conversations this user has received
+
   @@index([email, password], name: "email_password_idx")
   @@map("users")
 }
@@ -100,7 +103,7 @@ model Tweet {
 
 model HashTag {
   id   String @id @default(uuid())
-  name String @unique
+  name String
 
   createdAt    DateTime       @default(now()) @map("created_at")
   TweetHashTag TweetHashTag[]
@@ -185,6 +188,22 @@ model Like {
 
   @@unique([userId, tweetId]) // Ensure a user can only like a tweet once
   @@map("likes")
+}
+
+model Conversation {
+  id         String @id @default(uuid())
+  senderId   String @map("sender_id")
+  receiverId String @map("receiver_id")
+  content    String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId, receiverId], name: "sender_receiver_idx")
+  @@map("conversations")
 }
 
 enum UserVerifyStatus {

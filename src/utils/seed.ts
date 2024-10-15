@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid'
 const PASSWORD = 'TwitterClone@123456'
 
 // ID of your account, used to follow others
-const MYID = '520a849c-5766-4ae5-b401-608ec511c6af'
+const MYID = '04e8de3b-2537-4758-86d0-4c6d9ca47153'
 
 const USER_COUNT = 400
 
@@ -87,7 +87,7 @@ const followMultipleUsers = async (user_id: string, followed_user_id: string[]) 
 const checkAndCreateHashtags = async (hashtags: string[]) => {
   const hashtagRecords = await Promise.all(
     hashtags.map(async (hashtag) => {
-      const existingHashtag = await prisma.hashTag.findUnique({
+      const existingHashtag = await prisma.hashTag.findFirst({
         where: { name: hashtag }
       })
       if (existingHashtag) {

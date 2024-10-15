@@ -19,7 +19,7 @@ const imageSchema: ParamSchema = {
   isLength: { options: { min: 1, max: 400 }, errorMessage: USERS_MESSAGES.IMAGE_URL_LENGTH }
 }
 
-const userIdSchema: ParamSchema = {
+export const userIdSchema: ParamSchema = {
   custom: {
     options: async (value: string, { req }) => {
       if (!uuidValidate(value)) {
