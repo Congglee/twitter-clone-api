@@ -9,6 +9,7 @@ import { RegisterReqBody } from '~/types/users.types'
 import { hashPassword } from '~/utils/crypto'
 import { signToken, verifyToken } from '~/utils/jwt'
 import { v4 as uuidv4 } from 'uuid'
+import { sendForgotPasswordEmail, sendVerifyRegisterEmail } from '~/utils/mail'
 
 class AuthService {
   private signAccessToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
@@ -125,6 +126,7 @@ class AuthService {
         name: payload.name,
         email: payload.email,
         username: `user${user_id}`,
+        emailVerifyToken: email_verify_token,
         dateOfBirth: new Date(payload.date_of_birth),
         password: hashPassword(payload.password)
       }
@@ -143,8 +145,7 @@ class AuthService {
         exp: new Date(exp * 1000)
       }
     })
-
-    console.log('email_verify_token: ', email_verify_token)
+    await sendVerifyRegisterEmail(payload.email, email_verify_token)
 
     return { access_token, refresh_token }
   }
@@ -213,6 +214,7 @@ class AuthService {
     ])
     const [access_token, refresh_token] = token
     const { iat, exp } = await this.decodeRefreshToken(refresh_token)
+
     await prisma.refreshToken.create({
       data: {
         userId: user_id,
@@ -224,13 +226,12 @@ class AuthService {
 
     return { access_token, refresh_token }
   }
-  async resendVerifyEmail(user_id: string) {
+  async resendVerifyEmail(user_id: string, email: string) {
     const email_verify_token = await this.signEmailVerifyToken({
       user_id,
       verify: UserVerifyStatus.Unverified
     })
-    console.log('Resend verify email: ', email_verify_token)
-
+    await sendVerifyRegisterEmail(email, email_verify_token)
     await prisma.user.update({
       where: { id: user_id },
       data: { emailVerifyToken: email_verify_token }
@@ -238,14 +239,23 @@ class AuthService {
 
     return { message: AUTH_MESSAGES.RESEND_EMAIL_VERIFY_SUCCESS }
   }
-  async forgotPassword({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
+  async forgotPassword({
+    user_id,
+    email,
+    verify,
+    username
+  }: {
+    user_id: string
+    email: string
+    verify: UserVerifyStatus
+    username: string
+  }) {
     const forgot_password_token = await this.signForgotPasswordToken({ user_id, verify })
     await prisma.user.update({
       where: { id: user_id },
       data: { forgotPasswordToken: forgot_password_token }
     })
-
-    console.log('forgot_password_token: ', forgot_password_token)
+    await sendForgotPasswordEmail(email, forgot_password_token, username)
 
     return { message: AUTH_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD }
   }

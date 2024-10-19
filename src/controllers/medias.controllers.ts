@@ -5,6 +5,7 @@ import HTTP_STATUS from '~/config/httpStatus'
 import { MEDIAS_MESSAGES } from '~/config/messages'
 import mediasService from '~/services/medias.services'
 import fs from 'fs'
+import { sendFileFromS3 } from '~/utils/s3'
 
 export const uploadImageController = async (req: Request, res: Response, next: NextFunction) => {
   const url = await mediasService.uploadImage(req)
@@ -80,23 +81,12 @@ export const serveVideoStreamController = async (req: Request, res: Response, ne
 
 export const serveM3u8Controller = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params
-
-  return res.sendFile(path.resolve(UPLOAD_VIDEO_DIR, id, 'master.m3u8'), (err) => {
-    if (err) {
-      res.status((err as any).status).send('Not found')
-    }
-  })
+  sendFileFromS3(res, `videos-hls/${id}/master.m3u8`)
 }
 
 export const serveSegmentController = (req: Request, res: Response, next: NextFunction) => {
   const { id, v, segment } = req.params
-  // segment: master.m3u8, video_0.ts, video_1.ts, video_2.ts, ...
-
-  return res.sendFile(path.resolve(UPLOAD_VIDEO_DIR, id, v, segment), (err) => {
-    if (err) {
-      res.status((err as any).status).send('Not found')
-    }
-  })
+  sendFileFromS3(res, `videos-hls/${id}/${v}/${segment}`)
 }
 
 export const videoStatusController = async (req: Request, res: Response, next: NextFunction) => {

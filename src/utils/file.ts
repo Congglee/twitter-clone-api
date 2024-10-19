@@ -110,3 +110,21 @@ export const getExtension = (fullname: string) => {
   const namearr = fullname.split('.')
   return namearr[namearr.length - 1]
 }
+
+export const getFiles = (dir: string, files: string[] = []) => {
+  const fileList = fs.readdirSync(dir) // Get the list of files/directories in the current directory
+
+  for (const file of fileList) {
+    const name = `${dir}/${file}` // Get the full path of the file/directory ==> ex: /path/to/project/static/image/123.jpg
+    // Check if the current path is a directory or a file
+    if (fs.statSync(name).isDirectory()) {
+      // If it is a directory, recursively call the function to get the files in the directory
+      getFiles(name, files)
+    } else {
+      // If it is a file, push the full path to the files array
+      files.push(name)
+    }
+  }
+
+  return files
+}

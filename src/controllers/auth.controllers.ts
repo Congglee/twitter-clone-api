@@ -92,7 +92,7 @@ export const resendVerifyEmailController = async (req: Request, res: Response, n
       message: AUTH_MESSAGES.EMAIL_ALREADY_VERIFIED_BEFORE
     })
   }
-  const result = await authService.resendVerifyEmail(user_id)
+  const result = await authService.resendVerifyEmail(user_id, user.email)
 
   return res.json(result)
 }
@@ -102,8 +102,13 @@ export const forgotPasswordController = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { id, verify } = req.user as User
-  const result = await authService.forgotPassword({ user_id: id, verify: verify as UserVerifyStatus })
+  const { id, verify, email, username } = req.user as User
+  const result = await authService.forgotPassword({
+    user_id: id,
+    verify: verify as UserVerifyStatus,
+    email,
+    username: username as string
+  })
 
   return res.json(result)
 }

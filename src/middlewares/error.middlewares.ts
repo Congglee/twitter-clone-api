@@ -4,24 +4,31 @@ import HTTP_STATUS from '~/config/httpStatus'
 import { ErrorWithStatus } from '~/types/errors.types'
 
 export const defaultErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof ErrorWithStatus) {
-    return res.status(err.status).json(omit(err, ['status']))
-  }
-
-  // const errorObject: any = {}
-  // Object.getOwnPropertyNames(err).forEach((key) => {
-  //   Object.defineProperty(err, key, { enumerable: true })
-  // })
-
-  Object.getOwnPropertyNames(err).forEach((key) => {
-    const descriptor = Object.getOwnPropertyDescriptor(err, key)
-    if (descriptor && descriptor.configurable) {
-      Object.defineProperty(err, key, { enumerable: true })
+  try {
+    if (err instanceof ErrorWithStatus) {
+      return res.status(err.status).json(omit(err, ['status']))
     }
-  })
 
-  res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-    message: err.message,
-    errorInfo: omit(err, ['stack'])
-  })
+    const finalError: any = {}
+
+    Object.getOwnPropertyNames(err).forEach((key) => {
+      if (
+        !Object.getOwnPropertyDescriptor(err, key)?.configurable ||
+        !Object.getOwnPropertyDescriptor(err, key)?.writable
+      ) {
+        return
+      }
+      finalError[key] = err[key]
+    })
+
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+      errorInfo: omit(err, ['stack'])
+    })
+  } catch (error) {
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      message: 'Internal server error',
+      errorInfo: omit(error as any, ['stack'])
+    })
+  }
 }
