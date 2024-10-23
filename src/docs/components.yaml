@@ -1,0 +1,1176 @@
+components:
+  schemas:
+    UserVerifyStatus:
+      type: string
+      enum: [Unverified, Verified, Banned]
+      example: Verified
+
+    TweetType:
+      type: string
+      enum: [Tweet, Retweet, Comment, QuoteTweet]
+      example: Tweet
+
+    TweetAudience:
+      type: string
+      enum: [Everyone, TwitterCircle]
+      example: Everyone
+
+    MediaType:
+      type: string
+      enum: [Image, Video, HLS]
+      example: Image
+
+    EncodingStatus:
+      type: string
+      enum: [Pending, Processing, Success, Failed]
+      example: Success
+
+    Hashtag:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          example: Hello
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T00:00:00Z
+
+    TweetMention:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          example: John Doe
+        username:
+          type: string
+          example: johndoe
+        email:
+          type: string
+          format: email
+          example: johndoe@gmail.com
+
+    TweetMedia:
+      type: object
+      properties:
+        url:
+          type: string
+          example: https://loremflickr.com/640/480?lock=6830899402375168
+        type:
+          $ref: '#/components/schemas/MediaType'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 9b1ba69d-260c-49f2-ad84-e02c932823cb
+        name:
+          type: string
+          example: Chelsea1
+        email:
+          type: string
+          format: email
+          example: Eldridge.Dietrich@hotmail.com
+        dateOfBirth:
+          type: string
+          format: date-time
+          example: 1990-01-01T16:50:47.908Z
+        verify:
+          $ref: '#/components/schemas/UserVerifyStatus'
+        bio:
+          type: string
+          example: null
+        website:
+          type: string
+          example: null
+        username:
+          type: string
+          example: user9b1ba69d-260c-49f2-ad84-e02c932823cb
+        avatar:
+          type: string
+          example: null
+        coverPhoto:
+          type: string
+          example: null
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:55:40.383Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T16:59:21.445Z
+
+    Tweet:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 8996728b-ea6c-473d-8a61-150ddb787d6b
+        type:
+          $ref: '#/components/schemas/TweetType'
+        audience:
+          $ref: '#/components/schemas/TweetAudience'
+        content:
+          type: string
+          example: Color decretum deprimo suggero ipsa facilis damno esse approbo. Natus taedium quaerat placeat attonbitus cribro repellat uter contabesco. Aranea tenax traho absens aeger ultra adnuo. Auxilium vergo est. Dolorum id terga coruscus. Dolores antepono thorax. Accommodo timor antepono sed terga. Bibo contra cariosus utilis apud. Calcar adduco viriliter ustilo cunabula tremo tendo. Theca tantum voco voluptas fugiat cometes. Charisma alienus bis conatus volutabrum maxime combibo caveo ara. Vigilo quo dicta ex vapulus. Copiose benigne defendo amoveo valetudo. Patruus contego desparatus quis coma amaritudo molestias tabesco depopulo adulescens. Cursus quod comminor vulnero consectetur cariosus pectus. Eligendi aetas defleo bardus cunabula. Studio demulceo currus explicabo. Deputo cur error caute triumphus. Atavus amiculum cohaero tero deserunt arguo. Quibusdam avarus placeat amita.
+        guestViews:
+          type: integer
+          example: 0
+        userViews:
+          type: integer
+          example: 0
+        parentId:
+          type: string
+          format: uuid
+          example: null
+        userId:
+          type: string
+          format: uuid
+          example: 9b1ba69d-260c-49f2-ad84-e02c932823cb
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:55:58.417Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:55:58.417Z
+        hashtags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hashtag'
+          example:
+            [
+              {
+                'id': '5ca4332b-acc6-4bd4-82c7-f2a7b3a6b641',
+                'name': 'NextJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': '5f6c749d-6bfb-44cc-9051-1dbe538b0bfd',
+                'name': 'NodeJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': '89c69b06-1f18-49ea-a51f-ed5b725d0e22',
+                'name': 'TypeScript',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              }
+            ]
+        mentions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMention'
+          example:
+            [
+              {
+                id: 276e8b1b-6f13-41da-83e9-9e5f45ab523f,
+                name: Aaliyah99,
+                username: user276e8b1b-6f13-41da-83e9-9e5f45ab523f,
+                email: Julia_Daniel33@hotmail.com
+              }
+            ]
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMedia'
+          example: [{ url: 'https://picsum.photos/seed/BOOJu/2956/2119', type: Image }]
+        bookmarks:
+          type: integer
+          example: 0
+        likes:
+          type: integer
+          example: 0
+        retweetCount:
+          type: integer
+          example: 0
+        commentCount:
+          type: integer
+          example: 0
+        quoteCount:
+          type: integer
+          example: 0
+        views:
+          type: integer
+          example: 0
+
+    Retweet:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 0e7e2500-f6d8-4440-bd10-bb59a89be380
+        type:
+          type: string
+          enum: [Tweet, Retweet, Comment, QuoteTweet]
+          example: Retweet
+        audience:
+          $ref: '#/components/schemas/TweetAudience'
+        content:
+          type: string
+          example: ''
+        guestViews:
+          type: integer
+          example: 0
+        userViews:
+          type: integer
+          example: 0
+        parentId:
+          type: string
+          format: uuid
+          example: f43c6d48-db63-4c32-b93b-c71886e6a3ee
+        userId:
+          type: string
+          format: uuid
+          example: 15b65832-cd5d-49b2-896d-652115397f47
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:58:17.455Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T19:32:20.333Z
+        hashtags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hashtag'
+          example:
+            [
+              {
+                'id': '02f78d3d-1421-40ca-8f27-c0f21689e716',
+                'name': 'JavaScript',
+                'createdAt': '2024-10-22T18:26:21.056Z'
+              },
+              {
+                'id': '5ca4332b-acc6-4bd4-82c7-f2a7b3a6b641',
+                'name': 'NextJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': '5f6c749d-6bfb-44cc-9051-1dbe538b0bfd',
+                'name': 'NodeJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              }
+            ]
+        mentions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMention'
+          example:
+            [
+              {
+                'id': 'd12a4bac-e11a-4092-92aa-e2a1366cc456',
+                'name': 'Abdullah.Parker',
+                'username': 'userd12a4bac-e11a-4092-92aa-e2a1366cc456',
+                'email': 'Catharine84@yahoo.com'
+              }
+            ]
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMedia'
+          example: [{ 'url': 'https://loremflickr.com/640/480?lock=6830899402375168', 'type': 'Image' }]
+        bookmarks:
+          type: integer
+          example: 0
+        likes:
+          type: integer
+          example: 0
+        retweetCount:
+          type: integer
+          example: 0
+        commentCount:
+          type: integer
+          example: 0
+        quoteCount:
+          type: integer
+          example: 0
+        views:
+          type: integer
+          example: 0
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 17203f26-379d-4419-98f6-68807129e2bc
+        type:
+          type: string
+          enum: [Tweet, Retweet, Comment, QuoteTweet]
+          example: Comment
+        audience:
+          $ref: '#/components/schemas/TweetAudience'
+        content:
+          type: string
+          example: Wow! This is amazing.
+        guestViews:
+          type: integer
+          example: 0
+        userViews:
+          type: integer
+          example: 2
+        parentId:
+          type: string
+          format: uuid
+          example: f43c6d48-db63-4c32-b93b-c71886e6a3ee
+        userId:
+          type: string
+          format: uuid
+          example: 15b65832-cd5d-49b2-896d-652115397f47
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:59:01.847Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T19:32:20.333Z
+        hashtags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hashtag'
+          example:
+            [
+              {
+                'id': '02f78d3d-1421-40ca-8f27-c0f21689e716',
+                'name': 'JavaScript',
+                'createdAt': '2024-10-22T18:26:21.056Z'
+              },
+              {
+                'id': '89c69b06-1f18-49ea-a51f-ed5b725d0e22',
+                'name': 'TypeScript',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': 'bdfc0fd2-0df9-4f4b-90f4-79549cbc7b1f',
+                'name': 'ReactJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              }
+            ]
+        mentions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMention'
+          example:
+            [
+              {
+                'id': '6db989ab-9776-42db-bbcb-171f3926e125',
+                'name': 'Addie_Littel62',
+                'username': 'user6db989ab-9776-42db-bbcb-171f3926e125',
+                'email': 'Cody.Cummings@yahoo.com'
+              }
+            ]
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMedia'
+          example: []
+        bookmarks:
+          type: integer
+          example: 0
+        likes:
+          type: integer
+          example: 0
+        retweetCount:
+          type: integer
+          example: 0
+        commentCount:
+          type: integer
+          example: 0
+        quoteCount:
+          type: integer
+          example: 0
+        views:
+          type: integer
+          example: 0
+
+    QuoteTweet:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 25ee789d-42bd-41fc-ac13-b7674ad7d839
+        type:
+          type: string
+          enum: [Tweet, Retweet, Comment, QuoteTweet]
+          example: QuoteTweet
+        audience:
+          $ref: '#/components/schemas/TweetAudience'
+        content:
+          type: string
+          example: Hello world!
+        guestViews:
+          type: integer
+          example: 1
+        userViews:
+          type: integer
+          example: 4
+        parentId:
+          type: string
+          format: uuid
+          example: f43c6d48-db63-4c32-b93b-c71886e6a3ee
+        userId:
+          type: string
+          format: uuid
+          example: 15b65832-cd5d-49b2-896d-652115397f47
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:59:39.996Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T19:34:46.045Z
+        hashtags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hashtag'
+          example:
+            [
+              {
+                'id': '02f78d3d-1421-40ca-8f27-c0f21689e716',
+                'name': 'JavaScript',
+                'createdAt': '2024-10-22T18:26:21.056Z'
+              },
+              {
+                'id': '5ca4332b-acc6-4bd4-82c7-f2a7b3a6b641',
+                'name': 'NextJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': '5f6c749d-6bfb-44cc-9051-1dbe538b0bfd',
+                'name': 'NodeJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': '89c69b06-1f18-49ea-a51f-ed5b725d0e22',
+                'name': 'TypeScript',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': 'bdfc0fd2-0df9-4f4b-90f4-79549cbc7b1f',
+                'name': 'ReactJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              }
+            ]
+        mentions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMention'
+          example:
+            [
+              {
+                'id': 'afa579d2-7846-4017-bbc8-7ff8a2953cc0',
+                'name': 'Clarabelle73',
+                'username': 'userafa579d2-7846-4017-bbc8-7ff8a2953cc0',
+                'email': 'Dane42@hotmail.com'
+              },
+              {
+                'id': '004035d0-60dc-41f7-96f4-64cb55662429',
+                'name': 'Clemens.Stark',
+                'username': 'user004035d0-60dc-41f7-96f4-64cb55662429',
+                'email': 'Alize.Adams@hotmail.com'
+              }
+            ]
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMedia'
+          example: [{ 'url': 'https://loremflickr.com/640/480?lock=6830899402375168', 'type': 'Image' }]
+        bookmarks:
+          type: integer
+          example: 0
+        likes:
+          type: integer
+          example: 0
+        retweetCount:
+          type: integer
+          example: 0
+        commentCount:
+          type: integer
+          example: 0
+        quoteCount:
+          type: integer
+          example: 0
+        views:
+          type: integer
+          example: 6
+
+    SearchTweet:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 8996728b-ea6c-473d-8a61-150ddb787d6b
+        type:
+          $ref: '#/components/schemas/TweetType'
+        audience:
+          $ref: '#/components/schemas/TweetAudience'
+        content:
+          type: string
+          example: Color decretum deprimo suggero ipsa facilis damno esse approbo. Natus taedium quaerat placeat attonbitus cribro repellat uter contabesco. Aranea tenax traho absens aeger ultra adnuo. Auxilium vergo est. Dolorum id terga coruscus. Dolores antepono thorax. Accommodo timor antepono sed terga. Bibo contra cariosus utilis apud. Calcar adduco viriliter ustilo cunabula tremo tendo. Theca tantum voco voluptas fugiat cometes. Charisma alienus bis conatus volutabrum maxime combibo caveo ara. Vigilo quo dicta ex vapulus. Copiose benigne defendo amoveo valetudo. Patruus contego desparatus quis coma amaritudo molestias tabesco depopulo adulescens. Cursus quod comminor vulnero consectetur cariosus pectus. Eligendi aetas defleo bardus cunabula. Studio demulceo currus explicabo. Deputo cur error caute triumphus. Atavus amiculum cohaero tero deserunt arguo. Quibusdam avarus placeat amita.
+        guestViews:
+          type: integer
+          example: 0
+        userViews:
+          type: integer
+          example: 0
+        parentId:
+          type: string
+          format: uuid
+          example: null
+        userId:
+          type: string
+          format: uuid
+          example: 9b1ba69d-260c-49f2-ad84-e02c932823cb
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:55:58.417Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:55:58.417Z
+        user:
+          $ref: '#/components/schemas/User'
+        hashtags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hashtag'
+          example:
+            [
+              {
+                'id': '5ca4332b-acc6-4bd4-82c7-f2a7b3a6b641',
+                'name': 'NextJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': '5f6c749d-6bfb-44cc-9051-1dbe538b0bfd',
+                'name': 'NodeJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': '89c69b06-1f18-49ea-a51f-ed5b725d0e22',
+                'name': 'TypeScript',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              }
+            ]
+        mentions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMention'
+          example:
+            [
+              {
+                id: 276e8b1b-6f13-41da-83e9-9e5f45ab523f,
+                name: Aaliyah99,
+                username: user276e8b1b-6f13-41da-83e9-9e5f45ab523f,
+                email: Julia_Daniel33@hotmail.com
+              }
+            ]
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMedia'
+          example: [{ url: 'https://picsum.photos/seed/BOOJu/2956/2119', type: Image }]
+        bookmarks:
+          type: integer
+          example: 0
+        likes:
+          type: integer
+          example: 0
+        retweetCount:
+          type: integer
+          example: 0
+        commentCount:
+          type: integer
+          example: 0
+        quoteCount:
+          type: integer
+          example: 0
+        views:
+          type: integer
+          example: 0
+
+    SearchRetweet:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 0e7e2500-f6d8-4440-bd10-bb59a89be380
+        type:
+          type: string
+          enum: [Tweet, Retweet, Comment, QuoteTweet]
+          example: Retweet
+        audience:
+          $ref: '#/components/schemas/TweetAudience'
+        content:
+          type: string
+          example: ''
+        guestViews:
+          type: integer
+          example: 0
+        userViews:
+          type: integer
+          example: 0
+        parentId:
+          type: string
+          format: uuid
+          example: f43c6d48-db63-4c32-b93b-c71886e6a3ee
+        userId:
+          type: string
+          format: uuid
+          example: 15b65832-cd5d-49b2-896d-652115397f47
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:58:17.455Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T19:32:20.333Z
+        user:
+          $ref: '#/components/schemas/User'
+        hashtags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hashtag'
+          example:
+            [
+              {
+                'id': '02f78d3d-1421-40ca-8f27-c0f21689e716',
+                'name': 'JavaScript',
+                'createdAt': '2024-10-22T18:26:21.056Z'
+              },
+              {
+                'id': '5ca4332b-acc6-4bd4-82c7-f2a7b3a6b641',
+                'name': 'NextJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': '5f6c749d-6bfb-44cc-9051-1dbe538b0bfd',
+                'name': 'NodeJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              }
+            ]
+        mentions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMention'
+          example:
+            [
+              {
+                'id': 'd12a4bac-e11a-4092-92aa-e2a1366cc456',
+                'name': 'Abdullah.Parker',
+                'username': 'userd12a4bac-e11a-4092-92aa-e2a1366cc456',
+                'email': 'Catharine84@yahoo.com'
+              }
+            ]
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMedia'
+          example: [{ 'url': 'https://loremflickr.com/640/480?lock=6830899402375168', 'type': 'Image' }]
+        bookmarks:
+          type: integer
+          example: 0
+        likes:
+          type: integer
+          example: 0
+        retweetCount:
+          type: integer
+          example: 0
+        commentCount:
+          type: integer
+          example: 0
+        quoteCount:
+          type: integer
+          example: 0
+        views:
+          type: integer
+          example: 0
+
+    SearchComment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 17203f26-379d-4419-98f6-68807129e2bc
+        type:
+          type: string
+          enum: [Tweet, Retweet, Comment, QuoteTweet]
+          example: Comment
+        audience:
+          $ref: '#/components/schemas/TweetAudience'
+        content:
+          type: string
+          example: Wow! This is amazing.
+        guestViews:
+          type: integer
+          example: 0
+        userViews:
+          type: integer
+          example: 2
+        parentId:
+          type: string
+          format: uuid
+          example: f43c6d48-db63-4c32-b93b-c71886e6a3ee
+        userId:
+          type: string
+          format: uuid
+          example: 15b65832-cd5d-49b2-896d-652115397f47
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:59:01.847Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T19:32:20.333Z
+        user:
+          $ref: '#/components/schemas/User'
+        hashtags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hashtag'
+          example:
+            [
+              {
+                'id': '02f78d3d-1421-40ca-8f27-c0f21689e716',
+                'name': 'JavaScript',
+                'createdAt': '2024-10-22T18:26:21.056Z'
+              },
+              {
+                'id': '89c69b06-1f18-49ea-a51f-ed5b725d0e22',
+                'name': 'TypeScript',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': 'bdfc0fd2-0df9-4f4b-90f4-79549cbc7b1f',
+                'name': 'ReactJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              }
+            ]
+        mentions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMention'
+          example:
+            [
+              {
+                'id': '6db989ab-9776-42db-bbcb-171f3926e125',
+                'name': 'Addie_Littel62',
+                'username': 'user6db989ab-9776-42db-bbcb-171f3926e125',
+                'email': 'Cody.Cummings@yahoo.com'
+              }
+            ]
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMedia'
+          example: []
+        bookmarks:
+          type: integer
+          example: 0
+        likes:
+          type: integer
+          example: 0
+        retweetCount:
+          type: integer
+          example: 0
+        commentCount:
+          type: integer
+          example: 0
+        quoteCount:
+          type: integer
+          example: 0
+        views:
+          type: integer
+          example: 0
+
+    SearchQuoteTweet:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 25ee789d-42bd-41fc-ac13-b7674ad7d839
+        type:
+          type: string
+          enum: [Tweet, Retweet, Comment, QuoteTweet]
+          example: QuoteTweet
+        audience:
+          $ref: '#/components/schemas/TweetAudience'
+        content:
+          type: string
+          example: Hello world!
+        guestViews:
+          type: integer
+          example: 1
+        userViews:
+          type: integer
+          example: 4
+        parentId:
+          type: string
+          format: uuid
+          example: f43c6d48-db63-4c32-b93b-c71886e6a3ee
+        userId:
+          type: string
+          format: uuid
+          example: 15b65832-cd5d-49b2-896d-652115397f47
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:59:39.996Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T19:34:46.045Z
+        user:
+          $ref: '#/components/schemas/User'
+        hashtags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hashtag'
+          example:
+            [
+              {
+                'id': '02f78d3d-1421-40ca-8f27-c0f21689e716',
+                'name': 'JavaScript',
+                'createdAt': '2024-10-22T18:26:21.056Z'
+              },
+              {
+                'id': '5ca4332b-acc6-4bd4-82c7-f2a7b3a6b641',
+                'name': 'NextJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': '5f6c749d-6bfb-44cc-9051-1dbe538b0bfd',
+                'name': 'NodeJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': '89c69b06-1f18-49ea-a51f-ed5b725d0e22',
+                'name': 'TypeScript',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              },
+              {
+                'id': 'bdfc0fd2-0df9-4f4b-90f4-79549cbc7b1f',
+                'name': 'ReactJS',
+                'createdAt': '2024-10-15T18:48:41.135Z'
+              }
+            ]
+        mentions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMention'
+          example:
+            [
+              {
+                'id': 'afa579d2-7846-4017-bbc8-7ff8a2953cc0',
+                'name': 'Clarabelle73',
+                'username': 'userafa579d2-7846-4017-bbc8-7ff8a2953cc0',
+                'email': 'Dane42@hotmail.com'
+              },
+              {
+                'id': '004035d0-60dc-41f7-96f4-64cb55662429',
+                'name': 'Clemens.Stark',
+                'username': 'user004035d0-60dc-41f7-96f4-64cb55662429',
+                'email': 'Alize.Adams@hotmail.com'
+              }
+            ]
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMedia'
+          example: [{ 'url': 'https://loremflickr.com/640/480?lock=6830899402375168', 'type': 'Image' }]
+        bookmarks:
+          type: integer
+          example: 0
+        likes:
+          type: integer
+          example: 0
+        retweetCount:
+          type: integer
+          example: 0
+        commentCount:
+          type: integer
+          example: 0
+        quoteCount:
+          type: integer
+          example: 0
+        views:
+          type: integer
+          example: 6
+
+    VideoStatus:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 4e45e3f5-85ec-453f-ad26-32b0cac20f48
+        name:
+          type: string
+          example: oHP9OixAX-5pnAXnL6QFk
+        status:
+          $ref: '#/components/schemas/EncodingStatus'
+        message:
+          type: string
+          example: null
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:21:24.882Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T18:21:24.882Z
+
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: c266c54f-959d-4416-aeb3-98c4d0005dc3
+        senderId:
+          type: string
+          format: uuid
+          example: 15b65832-cd5d-49b2-896d-652115397f47
+        receiverId:
+          type: string
+          format: uuid
+          example: 04e8de3b-2537-4758-86d0-4c6d9ca47153
+        content:
+          type: string
+          example: Hello
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T21:43:37.895Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T21:43:37.895Z
+
+    AuthTokens:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOWIxYmE2OWQtMjYwYy00OWYyLWFkODQtZTAyYzkzMjgyM2NiIiwidG9rZW5fdHlwZSI6MCwidmVyaWZ5IjoiVmVyaWZpZWQiLCJpYXQiOjE3Mjk2OTM3MDIsImV4cCI6MTcyOTY5NzMwMn0.2V155yeWVc3LyU5_2Mmy2MOtFPbwus6Jz5zkAGuIRlQ
+        refresh_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOWIxYmE2OWQtMjYwYy00OWYyLWFkODQtZTAyYzkzMjgyM2NiIiwidG9rZW5fdHlwZSI6MSwidmVyaWZ5IjoiVmVyaWZpZWQiLCJpYXQiOjE3Mjk2OTM3MDIsImV4cCI6MTczODMzMzcwMn0.d1xkQuAlTKy2euPPYHjdJV4KqLJlgzx7HR_6x8GqHIk
+
+    RegisterBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Chelsea
+        email:
+          type: string
+          format: email
+          example: Eldridge.Dietrich@hotmail.com
+        password:
+          type: string
+          format: password
+          example: TwitterClone@123456
+        confirm_password:
+          type: string
+          format: password
+          example: TwitterClone@123456
+        date_of_birth:
+          type: string
+          format: date-time
+          example: 1990-01-01T16:50:47.908Z
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: Eldridge.Dietrich@hotmail.com
+        password:
+          type: string
+          format: password
+          example: TwitterClone@123456
+
+    UpdateMeBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Chelsea1
+        date_of_birth:
+          type: string
+          format: date-time
+          example: 1990-01-01T16:50:47.908Z
+        bio:
+          type: string
+          example: Web Developer
+        website:
+          type: string
+          example: https://google.com
+        username:
+          type: string
+          example: chelsea1
+        avatar:
+          type: string
+          example: https://loremflickr.com/640/480
+        cover_photo:
+          type: string
+          example: https://loremflickr.com/640/480
+
+    CreateTweetBody:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Tweet, Retweet, Comment, QuoteTweet]
+          example: Tweet
+        audience:
+          type: string
+          enum: [Everyone, TwitterCircle]
+          example: Everyone
+        content:
+          type: string
+          example: Vergo deprimo terra vulariter succurro curatio suffragium comptus commodi decet. Desipio suadeo adaugeo solutio comis carmen advoco ustilo cur. Aggero annus casso. Absorbeo advoco tendo dedico suspendo. Tondeo valetudo comedo dolor acies demergo molestias. Solitudo animadverto impedit via surculus error. Ante sto tero denego solvo certus succedo. Solus voluptatum cibo. Animadverto una possimus crur arto. Accendo utique vicissitudo bestia. Sublime adhaero cattus aqua asporto autem comedo depereo. Eveniet sponte thymum capio decor texo. Suffragium absconditus doloribus excepturi urbanus ancilla repellat cariosus abbas. Ocer bellum succurro calco aliquam degusto quam concido culpa conicio. Strues admitto auctus sunt astrum super teneo. Pax deprecator dolores cilicium decipio audentia cedo statim consequuntur ocer. Venia canonicus truculenter stillicidium laborum ademptio asporto tempora nihil. Minima eos cervus traho. Aspernatur civis vinco demonstro strenuus tamquam teneo. Statim somnus callide dignissimos porro neque umquam vix. Denuo sunt tolero. Dedico valeo subito traho ater. Placeat sperno cras. Adduco thema veritatis catena capio deludo aliquid aequitas charisma depono. Tenus trucido adaugeo adipisci vindico audeo bardus suus balbus architecto. Arx tamisium commemoro carmen cupio textor defungo colo totidem. Amita subseco decor cursus caecus thorax. Curiositas unde tredecim aperiam undique vulariter. Utique assumenda spero.
+        parent_id:
+          type: string
+          format: uuid
+          example: null
+        hashtags:
+          type: array
+          items:
+            type: string
+          example: [JavaScript, TypeScript, NodeJS, ReactJS, NextJS]
+        mentions:
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: [276e8b1b-6f13-41da-83e9-9e5f45ab523f, 581c39ef-8d8d-4ced-83ce-dc92b9c7102b]
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetMedia'
+          example: [{ type: Image, url: 'https://loremflickr.com/1471/2173?lock=8979724231428309' }]
+
+  responses:
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          examples:
+            accessTokenRequired:
+              summary: Access token is required
+              value:
+                message: Access token is required
+            refreshTokenRequired:
+              summary: Refresh token is required
+              value:
+                message: Refresh token is required
+            usedRefreshTokenOrNotExists:
+              summary: Used refresh token or not exist
+              value:
+                message: Used refresh token or not exist
+            jwtExpired:
+              summary: Jwt expired
+              value:
+                message: Jwt expired
+            invalidSignature:
+              summary: Invalid signature
+              value:
+                message: Invalid signature
+            jwtMalformed:
+              summary: Jwt malformed
+              value:
+                message: Jwt malformed
+
+    UserNotVerifiedError:
+      description: User not verified
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: User not verified
+
+    UserNotFoundError:
+      description: User not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: User not found
+
+    FileError:
+      description: File error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: File type is not valid
+              errorInfo:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  httpCode:
+                    type: number
+          examples:
+            fileTypeNotValid:
+              summary: File type is not valid
+              value:
+                message: File type is not valid
+                errorInfo:
+                  example: {}
+            fileIsEmpty:
+              summary: File is empty
+              value:
+                message: File is empty
+                errorInfo:
+                  example: {}
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

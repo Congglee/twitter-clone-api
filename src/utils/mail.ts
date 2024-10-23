@@ -99,7 +99,7 @@ export const sendForgotPasswordEmail = (
       .replace('{{title}}', 'Reset your password?')
       .replace(
         '{{content}}',
-        `If you requested a password reset for ${username}, use the confirmation code below to complete the process. If you didn't make this request, ignore this email.`
+        `If you requested a password reset for ${username}, click the link below to complete the process. If you didn't make this request, you can safely ignore this email.`
       )
       .replace('{{title_link}}', 'Reset Password')
       .replace('{{link}}', `${process.env.CLIENT_URL}/forgot-password?token=${forgot_password_token}`)
