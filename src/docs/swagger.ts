@@ -1,26 +1,19 @@
-import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerJSDoc, { SwaggerDefinition } from 'swagger-jsdoc'
+import fs from 'fs'
+import path from 'path'
+import YAML from 'yaml'
 
-const swaggerDefinition = {
+// Using YAML to parse the OpenAPI specification file
+const file = fs.readFileSync(path.resolve('twitter-clone-swagger.yaml'), 'utf8')
+export const swaggerDocument = YAML.parse(file)
+
+// Using swagger-jsdoc to generate OpenAPI specification
+const swaggerDefinition: SwaggerDefinition = {
   openapi: '3.0.3',
   info: {
     title: 'Twitter Clone API Documentation',
-    description: `
-      This is the API documentation for the Twitter Clone project. The API provides endpoints for various functionalities similar to Twitter, including user authentication, tweet management, media uploads, and more.
-
-      ## Available Endpoints
-
-      - **auth**: Endpoints for user authentication and authorization.
-      - **users**: Endpoints for user profile management, following/unfollowing users, and updating user information.
-      - **tweets**: Endpoints for creating, retrieving, and managing tweets.
-      - **bookmarks**: Endpoints for bookmarking and unbookmarking tweets.
-      - **likes**: Endpoints for liking and unliking tweets.
-      - **medias**: Endpoints for uploading and managing media files.
-      - **conversations**: Endpoints for managing user conversations.
-      - **search**: Endpoints for searching tweets and users.
-      - **static**: Endpoints for serving static media files.
-
-      Each endpoint is secured with appropriate middlewares to ensure that only authenticated and authorized users can access them.
-    `,
+    description:
+      'This is the API documentation for the Twitter Clone project. The API provides endpoints for various functionalities similar to Twitter, including user authentication, tweet management, media uploads, and more.\n\n## Available Endpoints\n\n- **auth**: Endpoints for user authentication and authorization.\n- **users**: Endpoints for user profile management, following/unfollowing users, and updating user information.\n- **tweets**: Endpoints for creating, retrieving, and managing tweets.\n- **bookmarks**: Endpoints for bookmarking and unbookmarking tweets.\n- **likes**: Endpoints for liking and unliking tweets.\n- **medias**: Endpoints for uploading and managing media files.\n- **conversations**: Endpoints for managing user conversations.\n- **search**: Endpoints for searching tweets and users.\n- **static**: Endpoints for serving static media files.\n\nEach endpoint is secured with appropriate middlewares to ensure that only authenticated and authorized users can access them.',
     version: '1.0.0'
   },
   servers: [

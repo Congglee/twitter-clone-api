@@ -17,13 +17,6 @@ import docsRouter from '~/routes/docs.routes'
 import { initFolder } from '~/utils/file'
 import initSocket from '~/utils/socket'
 
-// import YAML from 'yaml'
-// import fs from 'fs'
-// import path from 'path'
-
-// const file = fs.readFileSync(path.resolve('twitter-clone-swagger.yaml'), 'utf8')
-// const swaggerDocument = YAML.parse(file)
-
 // Uncomment this line to seed the database with some initial data
 // import '~/utils/seed'
 
@@ -38,7 +31,6 @@ initFolder()
 
 app.use(express.json())
 
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use('/api-docs', docsRouter)
 app.use('/auth', authRouter)
 app.use('/users', usersRouter)
