@@ -93,7 +93,10 @@ export const TWEETS_MESSAGES = {
   TWEET_IS_NOT_PUBLIC: 'Tweet is not public',
   GET_TWEET_DETAIL_SUCCESS: 'Get tweet detail successfully',
   GET_TWEET_CHILDREN_SUCCESS: 'Get tweet children successfully',
-  GET_NEW_FEEDS_SUCCESS: 'Get new feeds successfully'
+  GET_NEW_FEEDS_SUCCESS: 'Get new feeds successfully',
+  GET_BOOKMARK_TWEETS_SUCCESS: 'Get bookmark tweets successfully',
+  KEYWORD_MUST_BE_A_STRING: 'Keyword must be a string',
+  GET_LIKE_TWEETS_SUCCESS: 'Get like tweets successfully'
 } as const
 
 export const BOOKMARKS_MESSAGES = {

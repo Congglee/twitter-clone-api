@@ -1,6 +1,6 @@
 import { Prisma, TweetAudience, TweetType } from '@prisma/client'
 import prisma from '~/client'
-import { TweetRequestBody } from '~/types/tweets.types'
+import { TweetRequestBody, TweetWithRelations } from '~/types/tweets.types'
 import { excludeFromObject } from '~/utils/helpers'
 
 class TweetsService {
@@ -110,6 +110,76 @@ class TweetsService {
 
     return result
   }
+  async processTweetsData({
+    tweets,
+    where,
+    user_id
+  }: {
+    tweets: TweetWithRelations[]
+    where: Prisma.TweetWhereInput
+    user_id?: string
+  }) {
+    const tweetIds = tweets.map((tweet) => tweet.id)
+
+    const childTweets = await prisma.tweet.findMany({
+      where: {
+        parentId: { in: tweetIds },
+        type: { in: [TweetType.Retweet, TweetType.Comment, TweetType.QuoteTweet] }
+      }
+    })
+
+    const result = tweets.map((tweet) => {
+      const mentions = tweet.Mention?.map((mention) => mention.mentionedUser)
+      const hashtags = tweet.TweetHashTag?.map((tweetHashTag) => tweetHashTag.hashtag)
+      const medias = tweet.Media?.map((media) => ({ url: media.url, type: media.type }))
+
+      let retweetCount = 0
+      let commentCount = 0
+      let quoteCount = 0
+
+      childTweets.forEach((childTweet) => {
+        if (childTweet.type === TweetType.Retweet) {
+          retweetCount++
+        } else if (childTweet.type === TweetType.Comment) {
+          commentCount++
+        } else if (childTweet.type === TweetType.QuoteTweet) {
+          quoteCount++
+        }
+      })
+
+      const bookmarkCount = tweet.Bookmark?.length
+      const likeCount = tweet.Like?.length
+
+      const user =
+        tweet.user &&
+        excludeFromObject(tweet.user, ['password', 'emailVerifyToken', 'forgotPasswordToken', 'dateOfBirth'])
+
+      return {
+        ...excludeFromObject(tweet, ['TweetHashTag', 'Mention', 'Bookmark', 'Like', 'Media']),
+        user,
+        hashtags,
+        mentions,
+        medias,
+        bookmarks: bookmarkCount,
+        likes: likeCount,
+        retweetCount,
+        commentCount,
+        quoteCount,
+        views: tweet.userViews + tweet.guestViews
+      }
+    })
+
+    const inc = user_id ? { userViews: { increment: 1 } } : { guestViews: { increment: 1 } }
+    const [total] = await Promise.all([
+      prisma.tweet.count({ where }),
+      prisma.tweet.updateMany({
+        where: { id: { in: tweetIds } },
+        data: { ...inc }
+      })
+    ])
+
+    return { result, total }
+  }
   async getTweetChildren({
     tweet_id,
     tweet_type,
@@ -123,8 +193,10 @@ class TweetsService {
     page: number
     user_id?: string
   }) {
+    const where = { parentId: tweet_id, type: tweet_type }
+
     const tweets = await prisma.tweet.findMany({
-      where: { parentId: tweet_id, type: tweet_type },
+      where,
       include: {
         TweetHashTag: { include: { hashtag: true } },
         Mention: {
@@ -147,61 +219,7 @@ class TweetsService {
       take: limit
     })
 
-    const tweetIds = tweets.map((tweet) => tweet.id)
-
-    const childTweets = await prisma.tweet.findMany({
-      where: {
-        parentId: { in: tweetIds },
-        type: { in: [TweetType.Retweet, TweetType.Comment, TweetType.QuoteTweet] }
-      }
-    })
-
-    const result = tweets.map((tweet) => {
-      const mentions = tweet.Mention.map((mention) => mention.mentionedUser)
-      const hashtags = tweet.TweetHashTag.map((tweetHashTag) => tweetHashTag.hashtag)
-      const medias = tweet.Media.map((media) => ({ url: media.url, type: media.type }))
-
-      let retweetCount = 0
-      let commentCount = 0
-      let quoteCount = 0
-
-      childTweets.forEach((childTweet) => {
-        if (childTweet.type === TweetType.Retweet) {
-          retweetCount++
-        } else if (childTweet.type === TweetType.Comment) {
-          commentCount++
-        } else if (childTweet.type === TweetType.QuoteTweet) {
-          quoteCount++
-        }
-      })
-
-      const bookmarkCount = tweet.Bookmark.length
-      const likeCount = tweet.Like.length
-
-      return {
-        ...excludeFromObject(tweet, ['TweetHashTag', 'Mention', 'Bookmark', 'Like', 'Media']),
-        hashtags,
-        mentions,
-        medias,
-        bookmarks: bookmarkCount,
-        likes: likeCount,
-        retweetCount,
-        commentCount,
-        quoteCount,
-        views: tweet.userViews + tweet.guestViews
-      }
-    })
-
-    const inc = user_id ? { userViews: { increment: 1 } } : { guestViews: { increment: 1 } }
-    const [total] = await Promise.all([
-      prisma.tweet.count({
-        where: { parentId: tweet_id, type: tweet_type }
-      }),
-      prisma.tweet.updateMany({
-        where: { id: { in: tweetIds } },
-        data: { ...inc }
-      })
-    ])
+    const { result, total } = await this.processTweetsData({ tweets, where, user_id })
 
     return { tweets: result, total }
   }
@@ -214,25 +232,27 @@ class TweetsService {
     const ids = followed_user_ids.map((item) => item.followedUserId)
     ids.push(user_id)
 
-    const tweets = await prisma.tweet.findMany({
-      where: {
-        userId: { in: ids },
-        OR: [
-          { audience: TweetAudience.Everyone },
-          {
-            AND: [
-              { audience: TweetAudience.TwitterCircle },
-              {
-                user: {
-                  twitterCircle: {
-                    some: { id: user_id }
-                  }
+    const where = {
+      userId: { in: ids },
+      OR: [
+        { audience: TweetAudience.Everyone },
+        {
+          AND: [
+            { audience: TweetAudience.TwitterCircle },
+            {
+              user: {
+                twitterCircle: {
+                  some: { id: user_id }
                 }
               }
-            ]
-          }
-        ]
-      },
+            }
+          ]
+        }
+      ]
+    }
+
+    const tweets = await prisma.tweet.findMany({
+      where,
       include: {
         user: true,
         TweetHashTag: { include: { hashtag: true } },
@@ -256,79 +276,96 @@ class TweetsService {
       take: limit
     })
 
-    const tweetIds = tweets.map((tweet) => tweet.id)
+    const { result, total } = await this.processTweetsData({ tweets, where, user_id })
 
-    const childTweets = await prisma.tweet.findMany({
-      where: {
-        parentId: { in: tweetIds },
-        type: { in: [TweetType.Retweet, TweetType.Comment, TweetType.QuoteTweet] }
-      }
-    })
-
-    const result = tweets.map((tweet) => {
-      const mentions = tweet.Mention.map((mention) => mention.mentionedUser)
-      const hashtags = tweet.TweetHashTag.map((tweetHashTag) => tweetHashTag.hashtag)
-      const medias = tweet.Media.map((media) => ({ url: media.url, type: media.type }))
-
-      let retweetCount = 0
-      let commentCount = 0
-      let quoteCount = 0
-
-      childTweets.forEach((childTweet) => {
-        if (childTweet.type === TweetType.Retweet) {
-          retweetCount++
-        } else if (childTweet.type === TweetType.Comment) {
-          commentCount++
-        } else if (childTweet.type === TweetType.QuoteTweet) {
-          quoteCount++
-        }
-      })
-
-      const bookmarkCount = tweet.Bookmark.length
-      const likeCount = tweet.Like.length
-
-      const user = excludeFromObject(tweet.user, ['password', 'emailVerifyToken', 'forgotPasswordToken', 'dateOfBirth'])
-
-      return {
-        ...excludeFromObject(tweet, ['TweetHashTag', 'Mention', 'Bookmark', 'Like', 'Media', 'user']),
-        user,
-        hashtags,
-        mentions,
-        medias,
-        bookmarks: bookmarkCount,
-        likes: likeCount,
-        retweetCount,
-        commentCount,
-        quoteCount,
-        views: tweet.userViews + tweet.guestViews
-      }
-    })
-
-    const inc = user_id ? { userViews: { increment: 1 } } : { guestViews: { increment: 1 } }
-    const [total] = await Promise.all([
-      prisma.tweet.count({
-        where: {
-          userId: { in: ids },
-          OR: [
-            { audience: TweetAudience.Everyone },
+    return { tweets: result, total: total || 0 }
+  }
+  async getBookmarkTweets({
+    user_id,
+    limit,
+    page,
+    keyword
+  }: {
+    user_id: string
+    limit: number
+    page: number
+    keyword?: string
+  }) {
+    const search = keyword ? keyword.split(' ').join('&') : ''
+    const where = {
+      Bookmark: { some: { userId: user_id } },
+      AND: keyword
+        ? [
             {
-              AND: [
-                { audience: TweetAudience.TwitterCircle },
+              OR: [
+                { content: { search } },
                 {
-                  user: {
-                    twitterCircle: { some: { id: user_id } }
-                  }
+                  user: { OR: [{ name: { search } }, { username: { search } }] }
                 }
               ]
             }
           ]
-        }
-      }),
-      prisma.tweet.updateMany({
-        where: { id: { in: tweetIds } },
-        data: { ...inc }
-      })
-    ])
+        : []
+    }
+
+    const tweets = await prisma.tweet.findMany({
+      where,
+      include: {
+        user: true,
+        TweetHashTag: { include: { hashtag: true } },
+        Mention: {
+          include: {
+            mentionedUser: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                email: true
+              }
+            }
+          }
+        },
+        Bookmark: true,
+        Like: true,
+        Media: true
+      },
+      skip: limit * (page - 1),
+      take: limit
+    })
+
+    const { result, total } = await this.processTweetsData({ tweets, where, user_id })
+
+    return { tweets: result, total: total || 0 }
+  }
+  async getLikeTweets({ user_id, limit, page }: { user_id: string; limit: number; page: number }) {
+    const where = { Like: { some: { userId: user_id } } }
+
+    const tweets = await prisma.tweet.findMany({
+      where,
+      include: {
+        user: true,
+        TweetHashTag: { include: { hashtag: true } },
+        Mention: {
+          include: {
+            mentionedUser: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                email: true
+              }
+            }
+          }
+        },
+        Bookmark: true,
+        Like: true,
+        Media: true
+      },
+      skip: limit * (page - 1),
+      take: limit
+    })
+
+    const { result, total } = await this.processTweetsData({ tweets, where, user_id })
 
     return { tweets: result, total: total || 0 }
   }

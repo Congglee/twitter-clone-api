@@ -68,3 +68,43 @@ export const getNewFeedsController = async (req: Request<ParamsDictionary, any, 
     }
   })
 }
+
+export const getBookmarkTweetsController = async (
+  req: Request<ParamsDictionary, any, any, TweetQuery>,
+  res: Response
+) => {
+  const user_id = req.decoded_authorization?.user_id as string
+  const limit = Number(req.query.limit)
+  const page = Number(req.query.page)
+  const keyword = req.query.keyword
+
+  const result = await tweetsService.getBookmarkTweets({ user_id, limit, page, keyword })
+
+  return res.json({
+    message: TWEETS_MESSAGES.GET_BOOKMARK_TWEETS_SUCCESS,
+    result: {
+      tweets: result.tweets,
+      limit,
+      page,
+      total_page: Math.ceil(result.total / limit)
+    }
+  })
+}
+
+export const getLikeTweetsController = async (req: Request<ParamsDictionary, any, any, Pagination>, res: Response) => {
+  const user_id = req.decoded_authorization?.user_id as string
+  const limit = Number(req.query.limit)
+  const page = Number(req.query.page)
+
+  const result = await tweetsService.getLikeTweets({ user_id, limit, page })
+
+  return res.json({
+    message: TWEETS_MESSAGES.GET_LIKE_TWEETS_SUCCESS,
+    result: {
+      tweets: result.tweets,
+      limit,
+      page,
+      total_page: Math.ceil(result.total / limit)
+    }
+  })
+}

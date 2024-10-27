@@ -1,8 +1,8 @@
 import { TweetType } from '@prisma/client'
 import prisma from '~/client'
 
-class LikeService {
-  async likeTweet({
+class BookmarkService {
+  async bookmarkTweet({
     user_id,
     tweet_id,
     tweet_type,
@@ -18,7 +18,7 @@ class LikeService {
       originalTweetId = parent_id
     }
 
-    const result = await prisma.like.upsert({
+    const result = await prisma.bookmark.upsert({
       where: { userId_tweetId: { userId: user_id, tweetId: originalTweetId } },
       update: {},
       create: { userId: user_id, tweetId: originalTweetId }
@@ -26,8 +26,8 @@ class LikeService {
 
     return result
   }
-  async unlikeTweet(user_id: string, tweet_id: string) {
-    const result = await prisma.like.delete({
+  async unbookmarkTweet(user_id: string, tweet_id: string) {
+    const result = await prisma.bookmark.delete({
       where: { userId_tweetId: { userId: user_id, tweetId: tweet_id } }
     })
 
@@ -35,5 +35,5 @@ class LikeService {
   }
 }
 
-const likeService = new LikeService()
-export default likeService
+const bookmarkService = new BookmarkService()
+export default bookmarkService

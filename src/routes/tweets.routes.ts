@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import {
   createTweetController,
+  getBookmarkTweetsController,
+  getLikeTweetsController,
   getNewFeedsController,
   getTweetChildrenController,
   getTweetController
@@ -9,6 +11,7 @@ import { accessTokenValidator } from '~/middlewares/auth.middlewares'
 import {
   audienceValidator,
   createTweetValidator,
+  getBookmarkTweetsValidator,
   getTweetChildrenValidator,
   paginationValidator,
   tweetIdValidator
@@ -404,6 +407,149 @@ tweetsRouter.get(
   accessTokenValidator,
   verifiedUserValidator,
   wrapRequestHandler(getNewFeedsController)
+)
+
+/**
+ * @swagger
+ * /tweets/bookmarks/list:
+ *   get:
+ *     tags:
+ *       - tweets
+ *     summary: Get bookmarked tweets
+ *     description: Get the list of tweets bookmarked by the currently authenticated user
+ *     operationId: getBookmarkTweets
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: page
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - name: limit
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *       - name: keyword
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: search keyword
+ *     responses:
+ *       '200':
+ *         description: Bookmarked tweets retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Get bookmark tweets successfully
+ *                 result:
+ *                   type: object
+ *                   properties:
+ *                     tweets:
+ *                       type: array
+ *                       items:
+ *                         oneOf:
+ *                           - $ref: '#/components/schemas/Tweet'
+ *                           - $ref: '#/components/schemas/Comment'
+ *                           - $ref: '#/components/schemas/QuoteTweet'
+ *                     limit:
+ *                       type: integer
+ *                       example: 10
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     total_page:
+ *                       type: integer
+ *                       example: 1
+ *       '401':
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       '403':
+ *         $ref: '#/components/responses/UserNotVerifiedError'
+ *       '422':
+ *         description: Validation error
+ */
+tweetsRouter.get(
+  '/bookmarks/list',
+  accessTokenValidator,
+  verifiedUserValidator,
+  getBookmarkTweetsValidator,
+  paginationValidator,
+  wrapRequestHandler(getBookmarkTweetsController)
+)
+
+/**
+ * @swagger
+ * /tweets/likes/list:
+ *   get:
+ *     tags:
+ *       - tweets
+ *     summary: Get liked tweets
+ *     description: Get the list of tweets liked by the currently authenticated user
+ *     operationId: getLikeTweets
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: page
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - name: limit
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *     responses:
+ *       '200':
+ *         description: Liked tweets retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Get liked tweets successfully
+ *                 result:
+ *                   type: object
+ *                   properties:
+ *                     tweets:
+ *                       type: array
+ *                       items:
+ *                         oneOf:
+ *                           - $ref: '#/components/schemas/Tweet'
+ *                           - $ref: '#/components/schemas/Comment'
+ *                           - $ref: '#/components/schemas/QuoteTweet'
+ *                     limit:
+ *                       type: integer
+ *                       example: 10
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     total_page:
+ *                       type: integer
+ *                       example: 1
+ *       '401':
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       '403':
+ *         $ref: '#/components/responses/UserNotVerifiedError'
+ */
+tweetsRouter.get(
+  '/likes/list',
+  accessTokenValidator,
+  verifiedUserValidator,
+  paginationValidator,
+  wrapRequestHandler(getLikeTweetsController)
 )
 
 export default tweetsRouter

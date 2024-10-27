@@ -335,3 +335,15 @@ export const paginationValidator = validate(
     ['query']
   )
 )
+
+export const getBookmarkTweetsValidator = validate(
+  checkSchema(
+    {
+      keyword: {
+        optional: { options: { nullable: true } },
+        isString: { errorMessage: TWEETS_MESSAGES.KEYWORD_MUST_BE_A_STRING }
+      }
+    },
+    ['query']
+  )
+)

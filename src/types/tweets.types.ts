@@ -1,8 +1,17 @@
 import { ParamsDictionary, Query } from 'express-serve-static-core'
-import { TweetType, TweetAudience, Media, User, Tweet, HashTag } from '@prisma/client'
+import { TweetType, TweetAudience, Media, User, Tweet, HashTag, Bookmark, Like } from '@prisma/client'
 
 export type TweetMedia = Pick<Media, 'url' | 'type'>
-type MentionUser = Pick<User, 'name' | 'username' | 'email'>
+type MentionUser = Pick<User, 'id' | 'name' | 'username' | 'email'>
+
+export interface TweetWithRelations extends Tweet {
+  Mention: { mentionedUser: MentionUser }[]
+  TweetHashTag: { hashtag: HashTag }[]
+  Media: Media[]
+  Bookmark: Bookmark[]
+  Like: Like[]
+  user?: User
+}
 
 export interface ExtendedTweet extends Tweet {
   hashtags: HashTag[]
@@ -25,15 +34,16 @@ export interface TweetRequestBody {
   medias?: TweetMedia[]
 }
 
+export interface Pagination {
+  limit: string
+  page: string
+}
+
 export interface TweetParams extends ParamsDictionary {
   tweet_id: string
 }
 
 export interface TweetQuery extends Pagination, Query {
   tweet_type: string
-}
-
-export interface Pagination {
-  limit: string
-  page: string
+  keyword?: string
 }
