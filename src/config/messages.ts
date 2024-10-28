@@ -66,7 +66,8 @@ export const USERS_MESSAGES = {
   UNFOLLOW_SUCCESS: 'Unfollow successfully',
   USERNAME_EXISTED: 'Username existed',
   OLD_PASSWORD_NOT_MATCH: 'Old password not match',
-  CHANGE_PASSWORD_SUCCESS: 'Change password successfully'
+  CHANGE_PASSWORD_SUCCESS: 'Change password successfully',
+  GET_RANDOM_USERS_SUCCESS: 'Get random users successfully'
 }
 
 export const MEDIAS_MESSAGES = {
@@ -96,7 +97,8 @@ export const TWEETS_MESSAGES = {
   GET_NEW_FEEDS_SUCCESS: 'Get new feeds successfully',
   GET_BOOKMARK_TWEETS_SUCCESS: 'Get bookmark tweets successfully',
   KEYWORD_MUST_BE_A_STRING: 'Keyword must be a string',
-  GET_LIKE_TWEETS_SUCCESS: 'Get like tweets successfully'
+  GET_LIKE_TWEETS_SUCCESS: 'Get like tweets successfully',
+  GET_RANDOM_NEW_FEEDS_SUCCESS: 'Get random new feeds successfully'
 } as const
 
 export const BOOKMARKS_MESSAGES = {

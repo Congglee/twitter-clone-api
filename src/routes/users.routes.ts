@@ -4,11 +4,13 @@ import {
   followController,
   getMeController,
   getProfileController,
+  getRandomUsersController,
   unfollowController,
   updateMeController
 } from '~/controllers/users.controllers'
 import { accessTokenValidator } from '~/middlewares/auth.middlewares'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
+import { paginationValidator } from '~/middlewares/tweets.middlewares'
 import {
   changePasswordValidator,
   followValidator,
@@ -104,6 +106,64 @@ usersRouter.patch(
   ]),
   wrapRequestHandler(updateMeController)
 )
+
+/**
+ * @swagger
+ * /users/random:
+ *   get:
+ *     tags:
+ *       - users
+ *     summary: Get random users
+ *     description: Retrieve a list of random users for the currently authenticated user to follow
+ *     operationId: getRandomUsers
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: page
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - name: limit
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *     responses:
+ *       '200':
+ *         description: Random users retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Get random users successfully
+ *                 result:
+ *                   type: object
+ *                   properties:
+ *                     users:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/User'
+ *                     limit:
+ *                       type: integer
+ *                       example: 10
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     total_page:
+ *                       type: integer
+ *                       example: 1
+ *       '401':
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       '422':
+ *         description: Validation error
+ */
+usersRouter.get('/random', accessTokenValidator, paginationValidator, wrapRequestHandler(getRandomUsersController))
 
 /**
  * @swagger

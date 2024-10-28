@@ -10,6 +10,7 @@ import {
   UnfollowReqParams,
   UpdateMeReqBody
 } from '~/types/users.types'
+import { Pagination } from '~/types/tweets.types'
 
 export const getMeController = async (req: Request, res: Response) => {
   const { user_id } = req.decoded_authorization as TokenPayload
@@ -70,4 +71,22 @@ export const changePasswordController = async (
   const result = await usersService.changePassword(user_id, password)
 
   return res.json(result)
+}
+
+export const getRandomUsersController = async (req: Request<ParamsDictionary, any, any, Pagination>, res: Response) => {
+  const user_id = req.decoded_authorization?.user_id as string
+  const limit = Number(req.query.limit)
+  const page = Number(req.query.page)
+
+  const result = await usersService.getRandomUsers({ user_id, limit, page })
+
+  return res.json({
+    message: USERS_MESSAGES.GET_RANDOM_USERS_SUCCESS,
+    result: {
+      users: result.users,
+      limit,
+      page,
+      total_page: Math.ceil(result.total / limit)
+    }
+  })
 }

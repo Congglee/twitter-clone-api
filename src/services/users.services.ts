@@ -5,7 +5,7 @@ import { AUTH_MESSAGES, USERS_MESSAGES } from '~/config/messages'
 import { ErrorWithStatus } from '~/types/errors.types'
 import { UpdateMeReqBody } from '~/types/users.types'
 import { hashPassword } from '~/utils/crypto'
-import { excludeFromObject } from '~/utils/helpers'
+import { excludeFromList, excludeFromObject } from '~/utils/helpers'
 
 class UsersService {
   async getMe(user_id: string) {
@@ -88,6 +88,47 @@ class UsersService {
       data: { password: hashPassword(new_password) }
     })
     return { message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS }
+  }
+  async getRandomUsers({ user_id, limit, page }: { user_id: string; limit: number; page: number }) {
+    // Check if user follows anyone
+    const followedUserCount = await prisma.follower.count({ where: { followerId: user_id } })
+
+    const twoWeeksAgo = new Date()
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14)
+
+    const where: any = {
+      NOT: { id: user_id },
+      OR: [{ Tweet: { some: { createdAt: { gte: twoWeeksAgo } } } }]
+    }
+
+    if (followedUserCount > 0) {
+      // Get the IDs of users followed by the current user
+      const followed_user_ids = await prisma.follower
+        .findMany({
+          where: { followerId: user_id },
+          select: { followedUserId: true }
+        })
+        .then((followers) => followers.map((follower) => follower.followedUserId))
+
+      // Add criteria to get users who also follow the same users
+      where['OR'].push({
+        followedBy: {
+          some: { followerId: { in: followed_user_ids } }
+        }
+      })
+    }
+
+    const users = await prisma.user.findMany({
+      where,
+      orderBy: { followedBy: { _count: 'desc' } },
+      skip: limit * (page - 1),
+      take: limit
+    })
+    const total = await prisma.user.count({ where })
+
+    const result = excludeFromList(users, ['password', 'emailVerifyToken', 'forgotPasswordToken', 'verify'])
+
+    return { users: result, total }
   }
 }
 

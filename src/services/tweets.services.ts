@@ -113,17 +113,19 @@ class TweetsService {
   async processTweetsData({
     tweets,
     where,
-    user_id
+    user_id,
+    hasFollowed
   }: {
     tweets: TweetWithRelations[]
     where: Prisma.TweetWhereInput
     user_id?: string
+    hasFollowed?: boolean
   }) {
-    const tweetIds = tweets.map((tweet) => tweet.id)
+    const tweet_ids = tweets.map((tweet) => tweet.id)
 
     const childTweets = await prisma.tweet.findMany({
       where: {
-        parentId: { in: tweetIds },
+        parentId: { in: tweet_ids },
         type: { in: [TweetType.Retweet, TweetType.Comment, TweetType.QuoteTweet] }
       }
     })
@@ -165,15 +167,45 @@ class TweetsService {
         retweetCount,
         commentCount,
         quoteCount,
-        views: tweet.userViews + tweet.guestViews
+        views: tweet.userViews + tweet.guestViews,
+        createdAt: tweet.createdAt
       }
     })
+
+    if (hasFollowed) {
+      result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    } else {
+      result.sort((a, b) => {
+        const interactionsA = a.likes + a.views + a.commentCount
+        const interactionsB = b.likes + b.views + b.commentCount
+
+        if (interactionsA !== interactionsB) {
+          return interactionsB - interactionsA
+        }
+
+        const retweetsA = a.retweetCount
+        const retweetsB = b.retweetCount
+
+        if (retweetsA !== retweetsB) {
+          return retweetsB - retweetsA
+        }
+
+        const bookmarksA = a.bookmarks
+        const bookmarksB = b.bookmarks
+
+        if (bookmarksA !== bookmarksB) {
+          return bookmarksB - bookmarksA
+        }
+
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      })
+    }
 
     const inc = user_id ? { userViews: { increment: 1 } } : { guestViews: { increment: 1 } }
     const [total] = await Promise.all([
       prisma.tweet.count({ where }),
       prisma.tweet.updateMany({
-        where: { id: { in: tweetIds } },
+        where: { id: { in: tweet_ids } },
         data: { ...inc }
       })
     ])
@@ -228,12 +260,13 @@ class TweetsService {
       where: { followerId: user_id },
       select: { followedUserId: true }
     })
+    const hasFollowed = followed_user_ids.length > 0
 
     const ids = followed_user_ids.map((item) => item.followedUserId)
     ids.push(user_id)
 
-    const where = {
-      userId: { in: ids },
+    const where: any = {
+      ...(followed_user_ids.length && { userId: { in: ids } }),
       OR: [
         { audience: TweetAudience.Everyone },
         {
@@ -276,7 +309,7 @@ class TweetsService {
       take: limit
     })
 
-    const { result, total } = await this.processTweetsData({ tweets, where, user_id })
+    const { result, total } = await this.processTweetsData({ tweets, where, user_id, hasFollowed })
 
     return { tweets: result, total: total || 0 }
   }
