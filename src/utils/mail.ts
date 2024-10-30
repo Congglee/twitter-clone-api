@@ -1,18 +1,16 @@
 import { SendEmailCommand, SESClient } from '@aws-sdk/client-ses'
-import { config } from 'dotenv'
 import fs from 'fs'
 import path from 'path'
-
-config()
+import { envConfig } from '~/config/config'
 
 const verifyEmailTemplate = fs.readFileSync(path.resolve('src/templates/verify-email.html'), 'utf-8')
 const forgotPasswordTemplate = fs.readFileSync(path.resolve('src/templates/forgot-password.html'), 'utf-8')
 
 const sesClient = new SESClient({
-  region: process.env.AWS_REGION,
+  region: envConfig.awsRegion,
   credentials: {
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID as string
+    secretAccessKey: envConfig.awsSecretAccessKey,
+    accessKeyId: envConfig.awsAccessKeyId
   }
 })
 
@@ -58,7 +56,7 @@ const createSendEmailCommand = ({
 
 const sendVerifyEmail = (toAddress: string, subject: string, body: string) => {
   const sendEmailCommand = createSendEmailCommand({
-    fromAddress: process.env.AWS_SES_FROM_ADDRESS as string,
+    fromAddress: envConfig.awsSesFromAddress,
     toAddresses: toAddress,
     body,
     subject
@@ -82,7 +80,7 @@ export const sendVerifyRegisterEmail = (
         'There’s one quick step you need to complete before creating your Twitter account. Let’s make sure this is the right email address for you — please confirm this is the right address to use for your new account.'
       )
       .replace('{{title_link}}', 'Verify Your Account')
-      .replace('{{link}}', `${process.env.CLIENT_URL}/verify-email?token=${email_verify_token}`)
+      .replace('{{link}}', `${envConfig.clientUrl}/verify-email?token=${email_verify_token}`)
   )
 }
 
@@ -102,7 +100,7 @@ export const sendForgotPasswordEmail = (
         `If you requested a password reset for ${username}, click the link below to complete the process. If you didn't make this request, you can safely ignore this email.`
       )
       .replace('{{title_link}}', 'Reset Password')
-      .replace('{{link}}', `${process.env.CLIENT_URL}/forgot-password?token=${forgot_password_token}`)
+      .replace('{{link}}', `${envConfig.clientUrl}/forgot-password?token=${forgot_password_token}`)
       .replace('{{username}}', username)
   )
 }

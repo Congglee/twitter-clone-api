@@ -1,6 +1,7 @@
 import { Request } from 'express'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { capitalize } from 'lodash'
+import { envConfig } from '~/config/config'
 import HTTP_STATUS from '~/config/httpStatus'
 import { AUTH_MESSAGES } from '~/config/messages'
 import { ErrorWithStatus } from '~/types/errors.types'
@@ -25,7 +26,7 @@ export const verifyAccessToken = async (access_token: string, req?: Request) => 
   try {
     const decoded_authorization = await verifyToken({
       token: access_token,
-      secretOrPublicKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
+      secretOrPublicKey: envConfig.jwtSecretAccessToken
     })
 
     if (req) {

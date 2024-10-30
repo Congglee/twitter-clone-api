@@ -3,6 +3,7 @@ import { checkSchema, ParamSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { capitalize } from 'lodash'
 import prisma from '~/client'
+import { envConfig } from '~/config/config'
 import HTTP_STATUS from '~/config/httpStatus'
 import { AUTH_MESSAGES } from '~/config/messages'
 import authService from '~/services/auth.services'
@@ -60,7 +61,7 @@ const forgotPasswordTokenSchema: ParamSchema = {
       try {
         const decoded_forgot_password_token = await verifyToken({
           token: value,
-          secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
+          secretOrPublicKey: envConfig.jwtSecretForgotPasswordToken
         })
         const { user_id } = decoded_forgot_password_token
 
@@ -211,7 +212,7 @@ export const refreshTokenValidator = validate(
 
             try {
               const [decoded_refresh_token, refresh_token] = await Promise.all([
-                verifyToken({ token: value, secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string }),
+                verifyToken({ token: value, secretOrPublicKey: envConfig.jwtSecretRefreshToken }),
                 prisma.refreshToken.findFirst({ where: { token: value } })
               ])
 
@@ -259,7 +260,7 @@ export const emailVerifyTokenValidator = validate(
             try {
               const decoded_email_verify_token = await verifyToken({
                 token: value,
-                secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
+                secretOrPublicKey: envConfig.jwtSecretEmailVerifyToken
               })
               ;(req as Request).decoded_email_verify_token = decoded_email_verify_token
             } catch (error) {

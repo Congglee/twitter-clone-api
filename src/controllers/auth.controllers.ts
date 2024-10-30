@@ -16,9 +16,7 @@ import { User, UserVerifyStatus } from '@prisma/client'
 import { AUTH_MESSAGES } from '~/config/messages'
 import HTTP_STATUS from '~/config/httpStatus'
 import prisma from '~/client'
-import { config } from 'dotenv'
-
-config()
+import { envConfig } from '~/config/config'
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
   const user = req.user as User
@@ -136,7 +134,7 @@ export const resetPasswordController = async (
 export const OAuthController = async (req: Request, res: Response) => {
   const { code } = req.query
   const result = await authService.OAuth(code as string)
-  const urlRedirect = `${process.env.CLIENT_REDIRECT_CALLBACK}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.newUser}&verify=${result.verify}`
+  const urlRedirect = `${envConfig.clientRedirectCallback}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.newUser}&verify=${result.verify}`
 
   return res.redirect(urlRedirect)
 }

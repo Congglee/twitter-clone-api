@@ -4,7 +4,7 @@ import sharp from 'sharp'
 import { getFiles, getNameFromFullname, handleUploadImage, handleUploadVideo } from '~/utils/file'
 import fsPromise from 'fs/promises'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from '~/config/dir'
-import { isProduction } from '~/config/config'
+import { envConfig, isProduction } from '~/config/config'
 import { encodeHLSWithMultipleVideoStreams } from '~/utils/video'
 import prisma from '~/client'
 import { EncodingStatus, MediaType } from '@prisma/client'
@@ -167,8 +167,8 @@ class MediasService {
 
         return {
           url: isProduction
-            ? `${process.env.HOST}/static/video-hls/${newName}/master.m3u8`
-            : `http://localhost:${process.env.PORT}/static/video-hls/${newName}/master.m3u8`,
+            ? `${envConfig.host}/static/video-hls/${newName}/master.m3u8`
+            : `http://localhost:${envConfig.port}/static/video-hls/${newName}/master.m3u8`,
           type: MediaType.HLS
         }
       })

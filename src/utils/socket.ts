@@ -1,8 +1,8 @@
 import { UserVerifyStatus } from '@prisma/client'
-import { config } from 'dotenv'
 import { Server as ServerHttp } from 'http'
 import { Server } from 'socket.io'
 import prisma from '~/client'
+import { envConfig } from '~/config/config'
 import HTTP_STATUS from '~/config/httpStatus'
 import logger from '~/config/logger'
 import { USERS_MESSAGES } from '~/config/messages'
@@ -10,11 +10,9 @@ import { ErrorWithStatus } from '~/types/errors.types'
 import { TokenPayload } from '~/types/users.types'
 import { verifyAccessToken } from '~/utils/commons'
 
-config()
-
 const initSocket = (httpServer: ServerHttp) => {
   const io = new Server(httpServer, {
-    cors: { origin: process.env.CLIENT_URL }
+    cors: { origin: envConfig.clientUrl }
   })
 
   const users: { [key: string]: { socket_id: string } } = {}

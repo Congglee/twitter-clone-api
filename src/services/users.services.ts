@@ -94,11 +94,11 @@ class UsersService {
     const followedUserCount = await prisma.follower.count({ where: { followerId: user_id } })
 
     const twoWeeksAgo = new Date()
-    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14)
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 30)
 
     const where: any = {
       NOT: { id: user_id },
-      OR: [{ Tweet: { some: { createdAt: { gte: twoWeeksAgo } } } }]
+      OR: [{ Tweet: { some: { createdAt: { gte: twoWeeksAgo } } } }, {}]
     }
 
     if (followedUserCount > 0) {
