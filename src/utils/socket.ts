@@ -1,4 +1,4 @@
-import { UserVerifyStatus } from '@prisma/client'
+import { NotificationType, UserVerifyStatus } from '@prisma/client'
 import { Server as ServerHttp } from 'http'
 import { Server } from 'socket.io'
 import prisma from '~/client'
@@ -76,6 +76,78 @@ const initSocket = (httpServer: ServerHttp) => {
 
       if (receiver_socket_id) {
         socket.to(receiver_socket_id).emit('receive_message', {
+          payload: result
+        })
+      }
+    })
+
+    socket.on('tweet_interaction', async (data) => {
+      const {
+        type,
+        tweet_id, // Tweet being interacted with,
+        user_id: actor_id // User doing the action
+      } = data.payload
+
+      // Get tweet owner
+      const tweet = await prisma.tweet.findUnique({
+        where: { id: tweet_id },
+        select: { userId: true }
+      })
+
+      if (!tweet) return
+
+      if (tweet.userId === actor_id) return
+
+      const result = await prisma.notification.create({
+        data: {
+          type,
+          userId: tweet.userId,
+          fromId: actor_id,
+          tweetId: tweet_id
+        },
+        include: {
+          user: true,
+          from: true,
+          tweet: true
+        }
+      })
+
+      const owner_socket_id = users[tweet.userId]?.socket_id
+      if (owner_socket_id) {
+        socket.to(owner_socket_id).emit('new_notification', {
+          payload: result
+        })
+      }
+    })
+
+    socket.on('user_interaction', async (data) => {
+      const {
+        type,
+        target_user_id, // User being mentioned/followed
+        user_id: actor_id, // User doing the action
+        tweet_id // Optional, required for mentions
+      } = data.payload
+
+      // Skip if interacting with self
+      if (target_user_id === actor_id) return
+
+      const result = await prisma.notification.create({
+        data: {
+          type,
+          userId: target_user_id,
+          fromId: actor_id,
+          tweetId: type === NotificationType.Mention ? tweet_id : null
+        },
+        include: {
+          user: true,
+          from: true,
+          tweet: true
+        }
+      })
+
+      const target_socket_id = users[target_user_id]?.socket_id
+      if (target_socket_id) {
+        socket.to(target_socket_id).emit('new_notification', {
           payload: result
         })
       }

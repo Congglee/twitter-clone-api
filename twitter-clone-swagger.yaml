@@ -14,6 +14,7 @@ info:
     - **likes**: Endpoints for liking and unliking tweets.
     - **medias**: Endpoints for uploading and managing media files.
     - **conversations**: Endpoints for managing user conversations.
+    - **notifications**: Endpoints for managing user notifications.
     - **search**: Endpoints for searching tweets and users.
     - **static**: Endpoints for serving static media files.
 
@@ -49,6 +50,8 @@ tags:
     description: Endpoints for uploading and managing media files
   - name: conversations
     description: Endpoints for managing user conversations
+  - name: notifications
+    description: Endpoints for managing user notifications
   - name: search
     description: Endpoints for searching tweets and users
   - name: static
@@ -1840,6 +1843,58 @@ paths:
         '422':
           description: Validation error
 
+  /notifications:
+    get:
+      tags:
+        - notifications
+      summary: Get notifications
+      description: Get the list of notifications by the currently authenticated user
+      operationId: getNotifications
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Notifications retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Get notifications successfully
+                  result:
+                    type: object
+                    properties:
+                      notifications:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Notification'
+                      limit:
+                        type: integer
+                        example: 10
+                      page:
+                        type: integer
+                        example: 1
+                      total_page:
+                        type: integer
+                        example: 1
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UserNotVerifiedError'
+
   /search:
     get:
       tags:
@@ -2030,6 +2085,11 @@ components:
       type: string
       enum: [Pending, Processing, Success, Failed]
       example: Success
+
+    NotificationType:
+      type: string
+      enum: [Like, Retweet, Comment, QuoteTweet, Follow, Mention]
+      example: Like
 
     Hashtag:
       type: object
@@ -2976,6 +3036,35 @@ components:
           format: date-time
           example: 2021-01-01T21:43:37.895Z
         updatedAt:
+          type: string
+          format: date-time
+          example: 2021-01-01T21:43:37.895Z
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 4e45e3f5-85ec-453f-ad26-32b0cac20f48
+        type:
+          $ref: '#/components/schemas/NotificationType'
+        read:
+          type: boolean
+          example: false
+        userId:
+          type: string
+          format: uuid
+          example: 15b65832-cd5d-49b2-896d-652115397f47
+        fromId:
+          type: string
+          format: uuid
+          example: 04e8de3b-2537-4758-86d0-4c6d9ca47153
+        tweetId:
+          type: string
+          format: uuid
+          example: 0e7e2500-f6d8-4440-bd10-bb59a89be380
+        createdAt:
           type: string
           format: date-time
           example: 2021-01-01T21:43:37.895Z

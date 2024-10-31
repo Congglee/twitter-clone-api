@@ -121,3 +121,7 @@ export const SEARCH_MESSAGES = {
 export const CONVERSATION_MESSAGES = {
   GET_CONVERSATIONS_SUCCESSFULLY: 'Get conversations successfully'
 }
+
+export const NOTIFICATIONS_MESSAGES = {
+  GET_NOTIFICATIONS_SUCCESSFULLY: 'Get notifications successfully'
+}

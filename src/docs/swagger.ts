@@ -13,7 +13,7 @@ const swaggerDefinition: SwaggerDefinition = {
   info: {
     title: 'Twitter Clone API Documentation',
     description:
-      'This is the API documentation for the Twitter Clone project. The API provides endpoints for various functionalities similar to Twitter, including user authentication, tweet management, media uploads, and more.\n\n## Available Endpoints\n\n- **auth**: Endpoints for user authentication and authorization.\n- **users**: Endpoints for user profile management, following/unfollowing users, and updating user information.\n- **tweets**: Endpoints for creating, retrieving, and managing tweets.\n- **bookmarks**: Endpoints for bookmarking and unbookmarking tweets.\n- **likes**: Endpoints for liking and unliking tweets.\n- **medias**: Endpoints for uploading and managing media files.\n- **conversations**: Endpoints for managing user conversations.\n- **search**: Endpoints for searching tweets and users.\n- **static**: Endpoints for serving static media files.\n\nEach endpoint is secured with appropriate middlewares to ensure that only authenticated and authorized users can access them.',
+      'This is the API documentation for the Twitter Clone project. The API provides endpoints for various functionalities similar to Twitter, including user authentication, tweet management, media uploads, and more.\n\n## Available Endpoints\n\n- **auth**: Endpoints for user authentication and authorization.\n- **users**: Endpoints for user profile management, following/unfollowing users, and updating user information.\n- **tweets**: Endpoints for creating, retrieving, and managing tweets.\n- **bookmarks**: Endpoints for bookmarking and unbookmarking tweets.\n- **likes**: Endpoints for liking and unliking tweets.\n- **medias**: Endpoints for uploading and managing media files.\n- **conversations**: Endpoints for managing user conversations.\n- **notifications**: Endpoints for managing user notifications.\n- **search**: Endpoints for searching tweets and users.\n- **static**: Endpoints for serving static media files.\n\nEach endpoint is secured with appropriate middlewares to ensure that only authenticated and authorized users can access them.',
     version: '1.0.0'
   },
   servers: [
@@ -50,6 +50,10 @@ const swaggerDefinition: SwaggerDefinition = {
     {
       name: 'conversations',
       description: 'Endpoints for managing user conversations'
+    },
+    {
+      name: 'notifications',
+      description: 'Endpoints for managing user notifications'
     },
     {
       name: 'search',

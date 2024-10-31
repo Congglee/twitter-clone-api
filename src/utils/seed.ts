@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid'
 const PASSWORD = 'TwitterClone@123456'
 
 // ID of your account, used to follow others
-const MYID = '04e8de3b-2537-4758-86d0-4c6d9ca47153'
+const MYID = 'f8a3b642-942a-4389-af29-2f4952347bc0'
 
 const USER_COUNT = 400
 

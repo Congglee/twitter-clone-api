@@ -47,6 +47,9 @@ model User {
   SentMessages     Conversation[] @relation("SentMessages") // Conversations this user has started
   ReceivedMessages Conversation[] @relation("ReceivedMessages") // Conversations this user has received
 
+  NotificationTo   Notification[] @relation("NotificationTo") // Notifications sent to this user
+  NotificationFrom Notification[] @relation("NotificationFrom") // Notifications sent from this user
+
   @@index([email, password], name: "email_password_idx")
   @@map("users")
 }
@@ -97,6 +100,7 @@ model Tweet {
   Mention      Mention[]
   Bookmark     Bookmark[]
   Like         Like[]
+  Notification Notification[]
 
   @@map("tweets")
 }
@@ -206,6 +210,28 @@ model Conversation {
   @@map("conversations")
 }
 
+model Notification {
+  id   String           @id @default(uuid())
+  type NotificationType
+  read Boolean          @default(false)
+
+  // Who should receive this notification
+  userId String @map("user_id")
+  user   User   @relation("NotificationTo", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Who triggered this notification
+  fromId String @map("from_id")
+  from   User   @relation("NotificationFrom", fields: [fromId], references: [id], onDelete: Cascade)
+
+  tweetId String? @map("tweet_id")
+  tweet   Tweet?  @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId, read]) // For querying unread notifications
+  @@map("notifications")
+}
+
 enum UserVerifyStatus {
   Unverified
   Verified
@@ -235,4 +261,13 @@ enum TweetType {
 enum TweetAudience {
   Everyone
   TwitterCircle
+}
+
+enum NotificationType {
+  Like
+  Retweet
+  Comment
+  Mention
+  Follow
+  QuoteTweet
 }
