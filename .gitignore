@@ -1,5 +1,14 @@
+# Dependencies
 node_modules/
+
+# TypeScript
 dist/
+
+# Environment varibales
 .env
-*.md
+
+# Files uploaded
 uploads/
+
+
+assets/
