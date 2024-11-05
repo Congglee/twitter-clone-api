@@ -18,8 +18,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:integration": "jest --detectOpenHandles --testMatch='**/tests/integration/**/*.test.ts' --verbose=false",
-    "test:unit": "jest --testMatch='**/tests/unit/**/*.test.ts'"
+    "test:verbose": "jest --verbose",
+    "test:clear": "jest --clearCache",
+    "test:api": "jest --testPathPattern=src/__tests__/.*\\.test\\.ts$ --detectOpenHandles",
+    "test:unit": "jest src/__tests__/unit",
+    "test:integration": "jest src/__tests__/integration"
   },
   "keywords": [],
   "author": "Conggglee",

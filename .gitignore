@@ -10,5 +10,7 @@ dist/
 # Files uploaded
 uploads/
 
+# Test coverage
+coverage/
 
 assets/

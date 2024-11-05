@@ -22,12 +22,6 @@ module.exports = {
   },
 
   /*
-   * Automatically restores mock state between tests
-   * Prevents mocks from one test affecting another
-   */
-  restoreMocks: true,
-
-  /*
    * Lists paths to exclude from code coverage reports
    * Ignores:
       - node_modules - Third-party dependencies
@@ -36,16 +30,6 @@ module.exports = {
       - tests - Test files themselves
    */
   coveragePathIgnorePatterns: ['node_modules', 'src/config', 'src/app.ts', 'tests'],
-
-  /*
-   * Specifies output formats for coverage reports
-   * Configured reporters:
-   *  - text - Terminal output
-   *  - lcov - Standard format for coverage tools
-   *  - clover - XML format for CI tools
-   *  - html - Browser-viewable report
-   */
-  coverageReporters: ['text', 'lcov', 'clover', 'html'],
 
   /*
    * Creates an alias for import paths in your tests.
@@ -59,9 +43,19 @@ module.exports = {
   },
 
   /*
-   * Tells Jest where to look when resolving modules:
-   *  - node_modules: The default location for installed packages
-   *  - src: Allows imports directly from the src directory without relative paths
+   * Ensures setup.ts runs before tests
    */
-  moduleDirectories: ['node_modules', 'src']
+  setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
+
+  /*
+   * Detect open handles (like database connections)
+   * Useful for finding memory leaks
+   */
+  detectOpenHandles: true,
+
+  /*
+   * Force exit after all tests complete
+   * Useful if some async operations are still running
+   */
+  forceExit: true
 }

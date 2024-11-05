@@ -24,7 +24,10 @@ import initSocket from '~/utils/socket'
 const app = express()
 const httpServer = createServer(app)
 
-removeExpiredRefreshTokens.start()
+// Only start cron job in production/development, not in test
+if (process.env.NODE_ENV !== 'test') {
+  removeExpiredRefreshTokens.start()
+}
 
 app.use(cors())
 
