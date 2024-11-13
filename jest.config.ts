@@ -29,7 +29,7 @@ module.exports = {
       - app.ts - Main application file
       - tests - Test files themselves
    */
-  coveragePathIgnorePatterns: ['node_modules', 'src/config', 'src/app.ts', 'tests'],
+  coveragePathIgnorePatterns: ['node_modules', 'src/config', 'src/app.ts', 'tests', 'src/client.ts'],
 
   /*
    * Creates an alias for import paths in your tests.
@@ -45,6 +45,7 @@ module.exports = {
   /*
    * Ensures setup.ts runs before tests
    */
+  setupFiles: ['<rootDir>/src/__tests__/singleton.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
 
   /*

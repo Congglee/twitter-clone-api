@@ -4,6 +4,7 @@ import { accessTokenValidator } from '~/middlewares/auth.middlewares'
 import { getConversationsValidator } from '~/middlewares/conversations.middlewares'
 import { paginationValidator } from '~/middlewares/tweets.middlewares'
 import { verifiedUserValidator } from '~/middlewares/users.middlewares'
+import { wrapRequestHandler } from '~/utils/handlers'
 
 const conversationsRouter = Router()
 
@@ -97,7 +98,7 @@ conversationsRouter.get(
   verifiedUserValidator,
   paginationValidator,
   getConversationsValidator,
-  getConversationsController
+  wrapRequestHandler(getConversationsController)
 )
 
 export default conversationsRouter

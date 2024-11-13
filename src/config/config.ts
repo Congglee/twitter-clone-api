@@ -2,14 +2,14 @@ import { config } from 'dotenv'
 import { validateEnv } from '~/utils/env'
 
 const env = process.env.NODE_ENV
-const envFilename = `.env`
+const envFilename = '.env'
+
+export const isProduction = env === 'production'
 
 config({ path: envFilename })
 
 // Validate environment variables
 validateEnv()
-
-export const isProduction = env === 'production'
 
 export const envConfig = {
   port: (process.env.PORT as string) || 8000,

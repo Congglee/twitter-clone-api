@@ -3,6 +3,7 @@ import { getNotificationsController } from '~/controllers/notifications.controll
 import { accessTokenValidator } from '~/middlewares/auth.middlewares'
 import { paginationValidator } from '~/middlewares/tweets.middlewares'
 import { verifiedUserValidator } from '~/middlewares/users.middlewares'
+import { wrapRequestHandler } from '~/utils/handlers'
 
 const notificationsRouter = Router()
 
@@ -65,7 +66,7 @@ notificationsRouter.get(
   accessTokenValidator,
   verifiedUserValidator,
   paginationValidator,
-  getNotificationsController
+  wrapRequestHandler(getNotificationsController)
 )
 
 export default notificationsRouter
