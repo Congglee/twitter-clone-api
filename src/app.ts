@@ -1,6 +1,9 @@
-import cors from 'cors'
+import cors, { CorsOptions } from 'cors'
 import express from 'express'
+import rateLimit from 'express-rate-limit'
+import helmet from 'helmet'
 import { createServer } from 'http'
+import { envConfig, isProduction } from '~/config/config'
 import { UPLOAD_VIDEO_DIR } from '~/config/dir'
 import { removeExpiredRefreshTokens } from '~/jobs/auth.jobs'
 import { defaultErrorHandler } from '~/middlewares/error.middlewares'
@@ -29,7 +32,20 @@ if (process.env.NODE_ENV !== 'test') {
   removeExpiredRefreshTokens.start()
 }
 
-app.use(cors())
+app.use(helmet())
+
+const corsOptions: CorsOptions = {
+  origin: isProduction ? envConfig.clientUrl : '*'
+}
+app.use(cors(corsOptions))
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true, // Return rate limit headers in the `RateLimit-*` headers
+  legacyHeaders: true // Disable default `X-RateLimit-*` headers
+})
+app.use(limiter)
 
 initFolder()
 
