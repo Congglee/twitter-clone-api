@@ -1,13 +1,13 @@
 import { SendEmailCommand, SESClient } from '@aws-sdk/client-ses'
 import { describe, expect, test } from '@jest/globals'
 import { mockClient } from 'aws-sdk-client-mock'
-import { newUserFixture } from '~/__tests__/fixtures/users.fixtures'
-import { createMockRefreshToken, createMockUser } from '~/__tests__/helpers/data'
-import { prismaMock } from '~/__tests__/singleton'
-import { TokenPayload } from '~/types/users.types'
-import * as cryptoUtils from '~/utils/crypto'
-import * as jwtUtils from '~/utils/jwt'
-import * as mailUtils from '~/utils/mail'
+import { TokenPayload } from '../../types/users.types'
+import * as cryptoUtils from '../../utils/crypto'
+import * as jwtUtils from '../../utils/jwt'
+import * as mailUtils from '../../utils/mail'
+import { newUserFixture } from '../fixtures/users.fixtures'
+import { createMockRefreshToken, createMockUser } from '../helpers/data'
+import { prismaMock } from '../singleton'
 
 describe('Auth Integration Tests', () => {
   jest.spyOn(jwtUtils, 'signToken').mockImplementation(() => {

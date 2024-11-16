@@ -1,7 +1,7 @@
 import { describe, test, expect } from '@jest/globals'
 import { Server } from 'http'
 import request from 'supertest'
-import app from '~/app'
+import app from '../app'
 import { server } from './setup'
 
 /**

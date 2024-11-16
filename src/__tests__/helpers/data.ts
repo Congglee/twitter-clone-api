@@ -1,5 +1,5 @@
 import { User, RefreshToken, UserVerifyStatus } from '@prisma/client'
-import * as cryptoUtils from '~/utils/crypto'
+import * as cryptoUtils from '../../utils/crypto'
 
 jest.spyOn(cryptoUtils, 'hashPassword').mockImplementation((password) => {
   return `${password}_hashed`

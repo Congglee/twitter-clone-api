@@ -15,10 +15,9 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:seed": "ts-node ./src/utils/seed.ts",
-    "test": "cross-env NODE_ENV=test jest",
+    "test": "cross-env NODE_ENV=test jest --testPathPattern=src/__tests__/.*\\.test\\.ts$",
     "test:watch": "cross-env NODE_ENV=test jest --watch",
     "test:coverage": "cross-env NODE_ENV=test jest --coverage",
-    "test:all": "cross-env NODE_ENV=test jest --testPathPattern=src/__tests__/.*\\.test\\.ts$",
     "test:e2e": "cross-env NODE_ENV=test jest --testPathPattern=src/__tests__/e2e/.*\\.test\\.ts$",
     "test:integration": "cross-env NODE_ENV=test jest --testPathPattern=src/__tests__/integration/.*\\.test\\.ts$",
     "test:unit": "cross-env NODE_ENV=test jest --testPathPattern=src/__tests__/unit/.*\\.test\\.ts$"

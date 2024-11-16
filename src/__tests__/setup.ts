@@ -1,8 +1,8 @@
 import { beforeAll, beforeEach, afterAll } from '@jest/globals'
 import { Server } from 'http'
-import { resetPrismaMock } from '~/__tests__/singleton'
-import app from '~/app'
-import { removeExpiredRefreshTokens } from '~/jobs/auth.jobs'
+import app from '../app'
+import { removeExpiredRefreshTokens } from '../jobs/auth.jobs'
+import { resetPrismaMock } from './singleton'
 
 let server: Server
 

@@ -1,7 +1,7 @@
 import { mockClient } from 'aws-sdk-client-mock'
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
-import { envConfig } from '~/config/config'
-import { sendForgotPasswordEmail, sendVerifyRegisterEmail } from '~/utils/mail'
+import { envConfig } from '../../config/config'
+import { sendForgotPasswordEmail, sendVerifyRegisterEmail } from '../../utils/mail'
 import { describe, expect, test } from '@jest/globals'
 
 /**

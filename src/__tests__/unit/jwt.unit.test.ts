@@ -1,5 +1,5 @@
 import { describe, test, expect } from '@jest/globals'
-import { signToken, verifyToken } from '~/utils/jwt'
+import { signToken, verifyToken } from '../../utils/jwt'
 
 describe('JWT Unit Tests', () => {
   const payload = { user_id: 'test_user_id', token_type: 0, verify: 'Verified' }

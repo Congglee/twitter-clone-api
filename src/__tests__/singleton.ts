@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended'
-import prisma from '~/client'
+import prisma from '../client'
 
 // Mock the entire '~/client' module
 // This will replace the default export of '~/client' with a Jest mock function that creates a deeply mocked object
