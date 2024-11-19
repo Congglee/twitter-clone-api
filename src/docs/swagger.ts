@@ -1,11 +1,11 @@
 import swaggerJSDoc, { SwaggerDefinition } from 'swagger-jsdoc'
-import fs from 'fs'
-import path from 'path'
-import YAML from 'yaml'
+// import fs from 'fs'
+// import path from 'path'
+// import YAML from 'yaml'
 
 // Using YAML to parse the OpenAPI specification file
-const file = fs.readFileSync(path.resolve('twitter-clone-swagger.yaml'), 'utf8')
-export const swaggerDocument = YAML.parse(file)
+// const file = fs.readFileSync(path.resolve('twitter-clone-swagger.yaml'), 'utf8')
+// export const swaggerDocument = YAML.parse(file)
 
 // Using swagger-jsdoc to generate OpenAPI specification
 const swaggerDefinition: SwaggerDefinition = {

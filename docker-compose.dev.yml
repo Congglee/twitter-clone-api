@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  node-app:
+    image: twitter-clone-api:v1
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./uploads:/home/node/app/uploads
+    container_name: twitter-clone-api-dev
+    restart: always

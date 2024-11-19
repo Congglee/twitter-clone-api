@@ -7,6 +7,9 @@ dist/
 # Environment varibales
 .env
 .env.test
+.env.development
+.env.production
+.env.staging
 
 # Files uploaded
 uploads/

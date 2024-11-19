@@ -1,0 +1,7 @@
+services:
+  node-app:
+    image: twitter-clone-api:v2
+    ports:
+      - '8000:8000'
+    container_name: twitter-clone-api-prod
+    restart: always

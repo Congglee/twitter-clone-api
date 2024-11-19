@@ -1,0 +1,21 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+env:
+  DOCKER_IMAGE: ${{ vars.REGISTRY }}/${{ vars.PROJECT_NAME }}:${{ vars.VERSION }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create env file
+        run: echo "${{ secrets.ENV_PRODUCTION }}" > .env.production
+      - name: Build the Docker image
+        run: docker build -t $DOCKER_IMAGE .
