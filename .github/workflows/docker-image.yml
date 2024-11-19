@@ -46,7 +46,7 @@ jobs:
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
             docker pull $DOCKER_IMAGE
             docker rm -f $DOCKER_CONTAINER || true
-            docker run --name $DOCKER_CONTAINER -dp 8000:8000 $DOCKER_IMAGE
+            docker run --name $DOCKER_CONTAINER -dp 8000:8000 --restart unless-stopped $DOCKER_IMAGE
 
             # Wait for container to start and show logs
             sleep 5
