@@ -19,3 +19,7 @@ jobs:
         run: echo "${{ secrets.ENV_PRODUCTION }}" > .env.production
       - name: Build the Docker image
         run: docker build -t $DOCKER_IMAGE .
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push the Docker image
+        run: docker push $DOCKER_IMAGE
