@@ -1023,11 +1023,11 @@ components:
       properties:
         name:
           type: string
-          example: Chelsea
+          example: John Doe
         email:
           type: string
           format: email
-          example: Eldridge.Dietrich@hotmail.com
+          example: johndoe@imail.edu.vn
         password:
           type: string
           format: password
@@ -1047,7 +1047,7 @@ components:
         email:
           type: string
           format: email
-          example: Eldridge.Dietrich@hotmail.com
+          example: johndoe@imail.edu.vn
         password:
           type: string
           format: password
