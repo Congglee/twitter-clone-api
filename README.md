@@ -2,6 +2,12 @@
   <img src="https://utfs.io/f/B9dfElgKSkF1qd45HuIIeGLrQYsfPXEMO26yuZladRVbHUwc" alt="readme-header"/>
 </div>
 
+<!-- 🚨 PROJECT ROADMAP 🚨 -->
+<div align="center">
+  <h2 style="color: orange; font-size: 2em; margin-bottom: 0.5em;">🚧 <b>Upcoming Major Update</b> 🚧</h2>
+  <strong style="font-size: 1.25em;">The project is planned to be migrated from <b>ExpressJS</b> to <b>Fastify</b> for better performance and scalability.<br/>Prisma ORM will also be upgraded to the latest version.<br/>Stay tuned!</strong>
+</div>
+
 <div align="center">
   <h1>✨ Welcome to the Twitter Clone API!<br/>NodeJs + Express + Prisma + Typescript ✨</h1>
 </div>
@@ -16,7 +22,7 @@
 [![NodeJs](https://img.shields.io/badge/node-%3E%3D18.0-brightgreen?logo=node.js&logoColor=white)](https://nodejs.org/ 'Go to NodeJs')
 [![NPM](https://img.shields.io/badge/npm-%3E%3D9.0-brightgreen?logo=npm&logoColor=white)](https://www.npmjs.com/ 'Go to NPM')
 [![Package - TypeScript](https://img.shields.io/badge/typescript-5.4.5-blue?logo=typescript&logoColor=white)](https://www.npmjs.com/package/typescript 'Go to TypeScript on NPM')
-[![Package - Prisma](https://img.shields.io/badge/prisma-5.20.0-blue?logo=prisma&logoColor=white)](https://www.npmjs.com/package/prisma 'Go to Prisma on NPM')
+[![Package - Prisma](https://img.shields.io/badge/prisma-latest-blue?logo=prisma&logoColor=white)](https://www.npmjs.com/package/prisma 'Go to Prisma on NPM')
 [![Package - Jest](https://img.shields.io/badge/jest-29.7.0-orange?logo=jest)](https://www.npmjs.com/package/jest 'Go to Jest on NPM')
 
 </div>
@@ -25,9 +31,9 @@
 
 ## :blue_heart: About the Project
 
-This project is a comprehensive **Twitter Clone REST API** built with modern technologies and best practices. It's a full-featured backend implementation that mirrors Twitter's core functionalities using **TypeScript** and **Express.js**. The API is production-ready and includes all essential social media features.<br />
+This project is a comprehensive **Twitter Clone REST API** built with modern technologies and best practices. It's a full-featured backend implementation that mirrors Twitter's core functionalities using **TypeScript** and Express.js. The API is production-ready and includes all essential social media features.<br />
 
-The project leverages cutting-edge technologies including **Prisma ORM** for efficient database operations, **AWS S3** for media storage, and **Socket.IO** for real-time notifications. It implements secure user authentication with JWT, email verification, and comprehensive media handling including image processing with **Sharp** and video streaming with HLS.
+The project leverages cutting-edge technologies including **Prisma ORM** (latest version) for efficient database operations, **AWS S3** for media storage, and **Socket.IO** for real-time notifications. It implements secure user authentication with JWT, email verification, and comprehensive media handling including image processing with **Sharp** and video streaming with HLS.
 
 Key features include:
 
@@ -39,7 +45,7 @@ Key features include:
 - Advanced search functionality with full-text search
 - Comprehensive API documentation using **Swagger/OpenAPI**
 
-The project follows clean architecture principles with thorough input validation using **Express Validator**, rate limiting for security, and extensive test coverage using **Jest**. Code quality is maintained through **ESLint** and **Prettier** integration.
+The project follows clean architecture principles with thorough input validation, rate limiting for security, và extensive test coverage using **Jest**. Code quality is maintained through **ESLint** and **Prettier** integration.
 
 The API is fully documented, tested, and ready for production deployment.
 <br/><br/>
@@ -47,9 +53,9 @@ The API is fully documented, tested, and ready for production deployment.
 ## :rocket: Technologies
 
 [![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/en/)
-[![Expressjs](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)](https://expressjs.com/)
+[![Fastify](https://img.shields.io/badge/fastify-%23000000.svg?style=for-the-badge&logo=fastify&logoColor=white)](https://www.fastify.io/)
 [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)](https://www.prisma.io/public/assets/images/getting-started)
+[![Prisma](https://img.shields.io/badge/Prisma-latest?style=for-the-badge&logo=Prisma&logoColor=white)](https://www.prisma.io/public/assets/images/getting-started)
 [![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white)](https://eslint.org/)
 [![Prettier](https://img.shields.io/badge/prettier-1A2C34?style=for-the-badge&logo=prettier&logoColor=F7BA3E)](https://prettier.io/)
